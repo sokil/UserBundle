@@ -4,7 +4,7 @@ namespace Sokil\UserBundle\Form\Handler;
 
 use Sokil\UserBundle\Entity\UserAttribute;
 use Sokil\UserBundle\Entity\UserAttributeValue;
-use Sokil\TaskStockBundle\Voter\UserVoter;
+use Sokil\UserBundle\Voter\UserVoter;
 use Sokil\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\UserBundle\Doctrine\UserManager;

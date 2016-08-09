@@ -5,7 +5,7 @@ namespace Sokil\UserBundle\Serializer\Normalizer;
 use Sokil\UserBundle\Entity\UserAttribute;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Sokil\UserBundle\Entity\User;
-use Sokil\TaskStockBundle\Voter\UserVoter;
+use Sokil\UserBundle\Voter\UserVoter;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry as EntityManagerRegistry;
 use Symfony\Component\Translation\TranslatorInterface;

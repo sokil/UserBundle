@@ -3,7 +3,7 @@
 namespace Sokil\UserBundle\Controller;
 
 use Sokil\UserBundle\Entity\User;
-use Sokil\TaskStockBundle\Voter\UserVoter;
+use Sokil\UserBundle\Voter\UserVoter;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
