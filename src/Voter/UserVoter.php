@@ -1,6 +1,6 @@
 <?php
 
-namespace Sokil\TaskStockBundle\Voter;
+namespace Sokil\UserBundle\Voter;
 
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
