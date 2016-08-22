@@ -1,0 +1,17 @@
+form
+  table.table.table-striped.table-hover.top-space
+    col(width="40px")
+    tr
+      th
+      th= t('Role')
+      th.hidden-xs= t('Child roles')
+    each childRoles, parentRole in roles
+      tr
+        - var checked = user.get('ownRoles') ? user.get('ownRoles').indexOf(parentRole) !== -1 : false
+        td
+          input(type="checkbox", name="roles[]", value=parentRole, checked=checked)
+        td= parentRole
+        td.hidden-xs= childRoles.length ? childRoles.join(", ") : t("No child roles")
+  .form-group
+    input.btn.btn-success(type="submit", value="Save")
+    span.status

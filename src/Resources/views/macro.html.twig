@@ -1,0 +1,33 @@
+{% macro jsResources() %}
+    {% javascripts
+        '@TaskStockBundle/Resources/public/js/components.jade.js'
+
+        '@TaskStockBundle/Resources/assets/models/user/User.js'
+        '@TaskStockBundle/Resources/assets/models/user/UserCollection.js'
+        '@TaskStockBundle/Resources/assets/models/roleGroup/RoleGroup.js'
+        '@TaskStockBundle/Resources/assets/models/roleGroup/RoleGroupCollection.js'
+
+        '@TaskStockBundle/Resources/assets/components/usersPage/UsersPageView.js'
+        '@TaskStockBundle/Resources/assets/components/userList/UserListView.js'
+        '@TaskStockBundle/Resources/assets/components/userEditor/UserEditorView.js'
+        '@TaskStockBundle/Resources/assets/components/user/UserView.js'
+        '@TaskStockBundle/Resources/assets/components/userRoles/UserRolesView.js'
+        '@TaskStockBundle/Resources/assets/components/userGroups/UserGroupsView.js'
+        '@TaskStockBundle/Resources/assets/components/roleGroupsList/RoleGroupsListView.js'
+        '@TaskStockBundle/Resources/assets/components/roleGroupEditorPopup/RoleGroupEditorPopupView.js'
+        '@TaskStockBundle/Resources/assets/components/roleGroupsPage/RoleGroupsPageView.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    {% javascripts
+        "../src/Sokil/TaskStockBundle/Resources/assets/components/usersPage/messages.{locale}.js"
+        "../src/Sokil/TaskStockBundle/Resources/assets/components/userList/messages.{locale}.js"
+        "../src/Sokil/TaskStockBundle/Resources/assets/components/userEditor/messages.{locale}.js"
+    vars=["locale"]
+    output="js/i18n.{locale}.js"
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+{% endmacro %}

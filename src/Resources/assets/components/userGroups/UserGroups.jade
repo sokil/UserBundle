@@ -1,0 +1,16 @@
+form
+  table.table.table-striped.table-hover.top-space
+    col(width="40px")
+    tr
+      th
+      th= t('Group')
+      th.hidden-xs= t('Roles')
+    each group in groups
+      tr
+        td
+          input(type="checkbox", name="groups[]", value=group.id, checked=user.inGroup(group.id))
+        td= group.name
+        td.hidden-xs= group.roles.join(", ")
+  .form-group
+    input.btn.btn-success(type="submit", value="Save")
+    span.status

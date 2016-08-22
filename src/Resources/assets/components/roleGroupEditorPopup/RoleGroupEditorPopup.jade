@@ -1,0 +1,17 @@
+form
+  .form-group
+    label= t('Group name')
+    input.form-control(type="text", name="name", value=group.get('name'))
+  .form-group
+    label= t('Roles')
+    .list
+      table.table.table-striped.table-hover
+        col(width="40px")
+        tbody
+          each childRoles, role in roles
+            tr
+              - var checked = _.contains(group.get('roles'), role)
+              td
+                input(type="checkbox", name="roles[]", value=role, checked=checked)
+              td
+                = role
