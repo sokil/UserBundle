@@ -25,7 +25,7 @@
     },
     "suggest": {
         "sokil/frontend-bundle": "Frontent bundle"
-    }
+    },
     "autoload": {
         "psr-4": {
             "Sokil\\UserBundle\\": ["src/", "tests/"]
