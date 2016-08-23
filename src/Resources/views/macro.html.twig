@@ -21,11 +21,11 @@
     {% endjavascripts %}
 
     {% javascripts
-        "../assets/components/usersPage/messages.{locale}.js"
-        "../assets/components/userList/messages.{locale}.js"
-        "../assets/components/userEditor/messages.{locale}.js"
-    vars=["locale"]
-    output="js/i18n.{locale}.js"
+        "@UserBundle/Resources/assets/components/usersPage/messages.{locale}.js"
+        "@UserBundle/Resources/assets/components/userList/messages.{locale}.js"
+        "@UserBundle/Resources/assets/components/userEditor/messages.{locale}.js"
+        vars=["locale"]
+        output="js/i18n.{locale}.js"
     %}
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
