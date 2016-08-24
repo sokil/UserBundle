@@ -1,7 +1,7 @@
 {
-    "name": "frontend-bundle",
+    "name": "user-bundle",
     "version": "0.0.1",
-    "description": "frontend bundle",
+    "description": "user bundle",
     "main": "Gruntfile.js",
     "author": "Dmytro Sokil <dmytro.sokil@gmail.com>",
     "license": "MIT",
