@@ -2,17 +2,17 @@ services:
     user.voter:
         class: Sokil\UserBundle\Voter\UserVoter
         arguments:
-          - @security.access.role_hierarchy_voter
+          - '@security.access.role_hierarchy_voter'
         tags:
            - { name: security.voter }
 
     user.authentication_success_handler:
         class: Sokil\UserBundle\EventListener\AuthenticationSuccessHandler
-        arguments: [@security.http_utils, {}]
+        arguments: ['@security.http_utils', {}]
 
     user.authentication_failure_handler:
         class: Sokil\UserBundle\EventListener\AuthenticationFailureHandler
-        arguments: [@http_kernel, @security.http_utils, {}, "@logger"]
+        arguments: ['@http_kernel', '@security.http_utils', {}, "@logger"]
 
     user.validation_errors_converter:
         class: Sokil\Converter\ValidationErrorsConverter
@@ -26,11 +26,11 @@ services:
     user.user_edit_form_handler:
         class: Sokil\UserBundle\Form\Handler\UserEditFormHandler
         arguments:
-            - @doctrine.orm.default_entity_manager
-            - @fos_user.user_manager
-            - @security.authorization_checker
-            - @security.token_storage
-            - @validator
+            - '@doctrine.orm.default_entity_manager'
+            - '@fos_user.user_manager'
+            - '@security.authorization_checker'
+            - '@security.token_storage'
+            - '@validator'
 
     user.repository.user_attributes:
         class: Sokil\UserBundle\Repository\UserAttributeRepository
@@ -42,6 +42,6 @@ services:
     user.user_normalizer:
         class: Sokil\UserBundle\Serializer\Normalizer\UserNormalizer
         arguments:
-            - @security.authorization_checker
-            - @doctrine
-            - @translator
+            - '@security.authorization_checker'
+            - '@doctrine'
+            - '@translator'
