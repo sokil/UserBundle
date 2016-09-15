@@ -14,7 +14,7 @@
         "doctrine/doctrine-bundle": "~1.2",
         "symfony/form": "2.8.*",
         "symfony/serializer": "2.8.*",
-        "doctrine/orm": "~2.2,>=2.2.3,<2.5",
+        "doctrine/orm": "~2.2,>=2.2.3",
         "symfony/validator": "2.*",
         "friendsofsymfony/user-bundle": "@stable",
         "sensio/framework-extra-bundle": "~3.0,>=3.0.2"
