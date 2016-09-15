@@ -1,3 +1,4 @@
 vendor
 src/Resources/public/
 src/node_modules/
+composer.lock
