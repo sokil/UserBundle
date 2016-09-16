@@ -34,10 +34,9 @@ services:
 
     user.repository.user_attributes:
         class: Sokil\UserBundle\Repository\UserAttributeRepository
-        factory_service: doctrine.orm.default_entity_manager
-        factory_method: getRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
-            - UserBundle:UserAttribute
+            - 'UserBundle:UserAttribute'
 
     user.user_normalizer:
         class: Sokil\UserBundle\Serializer\Normalizer\UserNormalizer
