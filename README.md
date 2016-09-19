@@ -36,7 +36,8 @@ fos_user:
     # group class
     group:
         group_class: Sokil\UserBundle\Entity\Group
-        db_driver: orm
+    # db
+    db_driver: orm
     # security
     firewall_name: main
     #registration
