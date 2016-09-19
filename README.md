@@ -9,7 +9,7 @@ User groups and roles management
 
 Install bundle through composer:
 ```
-composer.phar reequire sokil/user-bundle
+composer.phar require sokil/user-bundle
 ```
 
 Bundle uses assetic so you need to register it in assetic config:
