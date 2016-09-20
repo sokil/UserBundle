@@ -51,6 +51,12 @@ fos_user:
         sender_name:    %from_email_sender_name%
 ```
 
+Bundle requires deploy so call:
+```
+npm install
+grunt
+```
+
 Bundle uses assetic so you need to register it in assetic config:
 ```yaml
 assetic:
