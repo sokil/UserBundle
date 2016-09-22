@@ -59,7 +59,7 @@ user:
 ```
 
 Then set access control fot some of them in `./app/config/security.yml`:
-```
+```yaml
 security:
     # define encoder
     encoders:
