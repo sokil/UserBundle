@@ -111,6 +111,11 @@ security:
       - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
 ```
 
+Create tables:
+```
+./app/console doctrine:schema:update
+```
+
 Bundle requires deploy so call:
 ```
 npm install
