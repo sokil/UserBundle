@@ -116,6 +116,11 @@ Create tables:
 ./app/console doctrine:schema:update
 ```
 
+Create administrator:
+```
+./app/console fos:user:create admin --super-admin
+```
+
 Bundle requires deploy so call:
 ```
 npm install
