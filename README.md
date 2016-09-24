@@ -51,7 +51,7 @@ fos_user:
         sender_name:    %from_email_sender_name%
 ```
 
-Bundle declares some routes, ro add them to your `./app.config/routing.yml`:
+Bundle declares some routes, so add them to your `./app.config/routing.yml`:
 ```yaml
 user:
     resource: "@UserBundle/Resources/config/routing.yml"
