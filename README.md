@@ -151,6 +151,9 @@ In the spa twig template, add assets and configure app:
             routers: [
                 UserRouter
             ],
+            container: [
+                UserServiceDefinition
+            ],
         }));
         window.app.start();
     })();
