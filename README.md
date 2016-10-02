@@ -133,3 +133,28 @@ assetic:
     bundles:
         - UserBundle
 ```
+
+## Singla page application
+
+Bundle builds user interface over (sokil/frontend-bundle)[https://github.com/sokil/FrontendBundle], so initialise in as described in following manual, and add some configuration:
+
+In the spa twig template, add assets and configure app:
+
+```twig
+{% import "@UserBundle/Resources/views/macro.html.twig" as userSpa %}
+
+{{ userSpa.jsResources() }}
+
+<script type="text/javascript">
+        (function() {
+            window.app = new Application(_.extend({
+                routers: [
+                    UserRouter
+                ],
+            }));
+            window.app.start();
+        })();
+        // router
+    </script>
+    
+```
