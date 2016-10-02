@@ -146,15 +146,14 @@ In the spa twig template, add assets and configure app:
 {{ userSpa.jsResources() }}
 
 <script type="text/javascript">
-        (function() {
-            window.app = new Application(_.extend({
-                routers: [
-                    UserRouter
-                ],
-            }));
-            window.app.start();
-        })();
-        // router
-    </script>
+    (function() {
+        window.app = new Application(_.extend({
+            routers: [
+                UserRouter
+            ],
+        }));
+        window.app.start();
+    })();
+</script>
     
 ```
