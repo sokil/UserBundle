@@ -14,6 +14,7 @@
         '@UserBundle/Resources/assets/components/userList/UserListView.js'
         '@UserBundle/Resources/assets/components/userEditor/UserEditorView.js'
         '@UserBundle/Resources/assets/components/user/UserView.js'
+        '@UserBundle/Resources/assets/components/userParameters/UserParametersView.js'
         '@UserBundle/Resources/assets/components/userRoles/UserRolesView.js'
         '@UserBundle/Resources/assets/components/userGroups/UserGroupsView.js'
         '@UserBundle/Resources/assets/components/roleGroupsList/RoleGroupsListView.js'
@@ -24,9 +25,7 @@
     {% endjavascripts %}
 
     {% javascripts
-        "../vendor/sokil/user-bundle/src/Resources/assets/components/usersPage/messages.{locale}.js"
-        "../vendor/sokil/user-bundle/src/Resources/assets/components/userList/messages.{locale}.js"
-        "../vendor/sokil/user-bundle/src/Resources/assets/components/userEditor/messages.{locale}.js"
+        "../vendor/sokil/user-bundle/src/Resources/public/js/messages.{locale}.js"
         vars=["locale"]
         output="js/user.i18n.{locale}.js"
     %}

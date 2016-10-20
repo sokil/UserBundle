@@ -17,6 +17,11 @@ var UserGroupsView = Backbone.View.extend({
     },
 
     renderAsync: function() {
+        if (this.groups.length === 0) {
+            this.$el.html(app.render('UserGroupsEmptyList'));
+            return;
+        }
+
         this.$el.html(app.render('UserGroups', {
             user: this.model,
             groups: this.groups

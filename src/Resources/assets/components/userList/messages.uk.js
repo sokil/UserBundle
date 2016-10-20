@@ -1,6 +1,6 @@
 i18n.addMessages({
-    'Name': 'Им`я',
-    'Phone': 'Телефон',
-    'Edit': 'Змінити',
-    'Delete': 'Видалити'
+    'user.list.name': 'Им`я',
+    'user.list.phone': 'Телефон',
+    'user.list.edit': 'Змінити',
+    'user.list.delete': 'Видалити'
 });

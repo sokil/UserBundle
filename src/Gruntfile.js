@@ -5,6 +5,12 @@ module.exports = function (grunt) {
     grunt.config('env', env);
     console.log('Environment: ' + env);
 
+    grunt.config('locales', [
+        'uk',
+        'en',
+        'ru'
+    ]);
+
     grunt.initConfig({
         jshint: {
             files: [],
@@ -30,18 +36,22 @@ module.exports = function (grunt) {
                 },
                 files: {
                     "Resources/public/js/components.jade.js": [
-                        "Resources/assets/components/usersPage/*.jade",
-                        "Resources/assets/components/userList/*.jade",
-                        "Resources/assets/components/userEditor/*.jade",
-                        "Resources/assets/components/user/*.jade",
-                        "Resources/assets/components/userRoles/*.jade",
-                        "Resources/assets/components/userGroups/*.jade",
-
-                        "Resources/assets/components/roleGroupsList/*.jade",
-                        "Resources/assets/components/roleGroupEditorPopup/*.jade",
-                        "Resources/assets/components/roleGroupsPage/*.jade"
+                        "Resources/assets/components/**/*.jade",
                     ]
                 }
+            }
+        },
+        uglify: {
+            messages: {
+                files: (function() {
+                    var files = {}, locale;
+                    grunt.config('locales').forEach(function(locale) {
+                        files['Resources/public/js/messages.' + locale + '.js'] = [
+                            'Resources/assets/components/*/messages.' + locale + '.js'
+                        ];
+                    });
+                    return files;
+                })()
             }
         },
         watch: {
@@ -84,7 +94,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.registerTask('build', [
-        'newer:jade'
+        'newer:jade',
+        'newer:uglify'
     ]);
 
     grunt.registerTask('listen', [

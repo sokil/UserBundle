@@ -1,44 +1,4 @@
 .block.top-space
   .title= user.get('name') || t('New user')
   .content
-    if user.hasPermission('changeRoles')
-      ul.nav.nav-pills(class=user.isNew() ? 'hidden' : '')
-        li.active
-          a(data-target="#parameters", data-toggle="tab")= t('Parameters')
-        li
-          a(data-target="#roles", data-toggle="tab")= t('Roles')
-        li
-          a(data-target="#groups", data-toggle="tab")= t('Groups')
-    .tab-content
-      .tab-pane.active#parameters
-        form.top-space
-          .form-group
-            label= t('Email')
-            input(type="text", name="email", value=user.get('email'), class="form-control", autocomplete="off")
-          .form-group
-            label= t('Password')
-            input(type="password", name="password", value="", class="form-control", autocomplete="off")
-          .form-group
-            label= t('Name')
-            input(type="text", name="name", value=user.get('name'), class="form-control")
-          .form-group
-            label= t('Phone')
-            input(type="text", name="phone", value=user.get('phone'), class="form-control")
-          if user.has('attributes')
-            each attribute, attributeId in user.get('attributes')
-              if attribute.permissions.edit === true
-                .form-group
-                  label= attribute['label']
-                  if attribute['type'] === "string"
-                    input(type="text", name="attributeValues[" + attributeId + "]", value=attribute['value']['edit'], class="form-control")
-                  else if attribute['type'] === "entity"
-                    select(name="attributeValues[" + attributeId + "]", class="form-control")
-                      option(value="")= t("Not selected")
-                      each option in attribute['options']
-                        option(value=option['value'], selected=(option['value'] === attribute['value']['edit']))= option['text']
-          .form-group
-            input.btn.btn-success(type="submit", value=t("Save"))
-            span.status
-      .tab-pane#roles
-      .tab-pane#groups
         

@@ -27,6 +27,7 @@ var UserRouter = Marionette.AppRouter.extend({
             model.set('id', id);
         }
 
+        // show editor
         app.rootView.content.show(new UserEditorView({
             model: model
         }));
@@ -46,8 +47,7 @@ var UserRouter = Marionette.AppRouter.extend({
         }));
     },
 
-    roleGroupsAction: function()
-    {
+    roleGroupsAction: function() {
         app.rootView.content.show(new RoleGroupsPageView());
     }
 });

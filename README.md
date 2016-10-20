@@ -134,9 +134,9 @@ assetic:
         - UserBundle
 ```
 
-## Singla page application
+## Single page application
 
-Bundle builds user interface over (sokil/frontend-bundle)[https://github.com/sokil/FrontendBundle], so initialise in as described in following manual, and add some configuration:
+Bundle builds user interface over (sokil/frontend-bundle)[https://github.com/sokil/FrontendBundle], so initialise it, as described in following manual, and add some configuration:
 
 In the spa twig template, add assets and configure app:
 
