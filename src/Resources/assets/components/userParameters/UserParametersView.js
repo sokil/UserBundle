@@ -13,7 +13,7 @@ var UserParametersView = Backbone.View.extend({
         var self = this;
 
         // prepare data
-        var data = UrlMutator.unserializeQuery($('#parameters form').serialize());
+        var data = UrlMutator.unserializeQuery(this.$('form').serialize());
         data['_token'] = app.csrf;
 
         // show preloader
