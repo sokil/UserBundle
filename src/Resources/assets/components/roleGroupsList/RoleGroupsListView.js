@@ -54,7 +54,7 @@ var RoleGroupsListView = Backbone.View.extend({
         var collection = app.container.get('roleGroupsCollection');
         var model = collection.get(id);
         model.destroy().done(function() {
-            $a.closest('TR').remove();
+            $a.closest('[data-group]').remove();
         });
     }
 });

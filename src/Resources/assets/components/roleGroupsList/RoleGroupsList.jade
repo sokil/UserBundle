@@ -4,7 +4,7 @@ table.table.table-striped.table-hover.top-space
     th.hidden-xs= t('Roles')
     th
   each group in groups
-    tr
+    tr(data-group=group.get('id'))
       td= group.get('name')
       td.hidden-xs= group.get('roles').join(", ")
       td
