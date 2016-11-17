@@ -160,3 +160,7 @@ In the spa twig template, add assets and configure app:
 </script>
     
 ```
+
+## User attributes
+
+User attribures based on [EAV model](https://en.wikipedia.org/wiki/Entity%E2%80%93attribute%E2%80%93value_model). Attributes represented by entities, extended from class `UserAttribute`, values represented by entity `UserAttributeValue`. Attributes associayed with users' groups, so user has only attributes, related to it's groups.
