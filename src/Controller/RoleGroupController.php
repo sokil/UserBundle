@@ -95,11 +95,9 @@ class RoleGroupController extends Controller
             throw new NotFoundHttpException("Group not found");
         }
 
-        return new JsonResponse([
-            'id' => $group->getId(),
-            'name' => $group->getName(),
-            'roles' => $group->getRoles(),
-        ]);
+        return new JsonResponse(
+            $this->get('user.serializer.normalizer.roleGroup')->normalize($group)
+        );
     }
 
     /**
@@ -160,8 +158,36 @@ class RoleGroupController extends Controller
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return new JsonResponse([
-            'id' => $group->getId(),
-        ]);
+        return new JsonResponse(
+            $this->get('user.serializer.normalizer.roleGroup')->normalize($group)
+        );
+    }
+
+    /**
+     * @Route("/{id}", name="role_group_delete", requirements={"id": "\d+"})
+     * @Method({"DELETE"})
+     */
+    public function deleteAction($id)
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $group = $em->getReference('UserBundle:Group', $id);
+        $em->remove($group);
+
+        try {
+            $em->flush();
+            return new JsonResponse();
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'message' => $e->getMessage(),
+                ],
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+
     }
 }

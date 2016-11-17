@@ -3,7 +3,8 @@ var RoleGroupsListView = Backbone.View.extend({
     groups: null,
 
     events: {
-        'click .edit': 'clickEditEventListener'
+        'click .edit': 'clickEditEventListener',
+        'click .delete': 'clickDeleteEventListener'
     },
     
     initialize: function() {
@@ -44,5 +45,16 @@ var RoleGroupsListView = Backbone.View.extend({
             });
             model.fetch();
         }
+    },
+
+    clickDeleteEventListener: function(e) {
+        var $a = $(e.currentTarget);
+        var id = $a.data('id');
+
+        var collection = app.container.get('roleGroupsCollection');
+        var model = collection.get(id);
+        model.destroy().done(function() {
+            $a.closest('TR').remove();
+        });
     }
 });
