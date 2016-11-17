@@ -52,6 +52,13 @@ module.exports = function (grunt) {
                     });
                     return files;
                 })()
+            },
+            perfectScrollbar: {
+                files: {
+                    'Resources/public/js/perfect-scrollbar.js': [
+                        'node_modules/perfect-scrollbar/dist/js/perfect-scrollbar.jquery.min.js'
+                    ]
+                }
             }
         },
         watch: {
@@ -63,22 +70,13 @@ module.exports = function (grunt) {
                 options: {},
             }
         },
-        copy: {
-            fonts: {
-                expand: true,
-                flatten: true,
-                src: [
-                    'bower_components/bootstrap/dist/fonts/*'
-                ],
-                dest: '../../../web/fonts/'
-            },
-            images: {
-                expand: true,
-                flatten: true,
-                src: [
-                    'Resources/assets/images/*'
-                ],
-                dest: 'Resources/public/images/'
+        cssmin: {
+            perfectScrollbarCss: {
+                files: {
+                    'Resources/public/css/perfect-scrollbar.css': [
+                        'node_modules/perfect-scrollbar/dist/css/perfect-scrollbar.min.css'
+                    ]
+                }
             }
         }
     });

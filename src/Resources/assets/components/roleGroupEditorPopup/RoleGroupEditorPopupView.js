@@ -38,7 +38,11 @@ var RoleGroupEditorPopupView = PopupView.extend({
         });
 
         //init scroll
-        require(['perfectScrollbar'], function() {
+        app.loadCss([
+            '/bundles/user/css/perfect-scrollbar.css'
+        ]);
+
+        require(['user/js/perfect-scrollbar'], function() {
             // show body
             self.setBody(html);
             // add scroll
