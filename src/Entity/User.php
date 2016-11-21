@@ -225,6 +225,23 @@ class User extends \FOS\UserBundle\Entity\User
         return parent::isEnabled() && !$this->deleted;
     }
 
+    /**
+     * Get list of related group ids
+     *
+     * @return int[]
+     */
+    public function getGroupIds()
+    {
+        $ids = array();
+
+        /* @var $group \Sokil\UserBundle\Entity\Group */
+        foreach ($this->getGroups() as $group) {
+            $ids[] = $group->getId();
+        }
+
+        return $ids;
+    }
+
     public function __toString()
     {
         return $this->name;

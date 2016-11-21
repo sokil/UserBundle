@@ -21,8 +21,11 @@ class UserAttributeRepository extends EntityRepository
                 FROM UserBundle:UserAttribute ua
                 LEFT JOIN ua.groups ug
                 INDEX BY ua.id
-                WHERE ug.id = 1
-            ');
+                WHERE ug.id IN (:groupIds)
+            ')
+        ->setParameters([
+            ':groupIds' => $user->getGroupIds(),
+        ]);
 
         return $query;
     }
