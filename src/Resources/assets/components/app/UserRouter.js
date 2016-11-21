@@ -5,7 +5,8 @@ var UserRouter = Marionette.AppRouter.extend({
         "users/new": "editUserAction",
         "users/:id/edit": "editUserAction",
         "users/:id": "userAction",
-        "roleGroups": "roleGroupsAction"
+        "roleGroups": "roleGroupsAction",
+        "usersAttributes": "usersAttributesAction"
     },
 
     /**
@@ -49,5 +50,13 @@ var UserRouter = Marionette.AppRouter.extend({
 
     roleGroupsAction: function() {
         app.rootView.content.show(new RoleGroupsPageView());
+    },
+
+    usersAttributesAction: function() {
+        var collection = new UserAttributeCollection();
+        app.rootView.content.show(new UsersAttributesListView({
+            collection: collection
+        }));
+        collection.fetch();
     }
 });

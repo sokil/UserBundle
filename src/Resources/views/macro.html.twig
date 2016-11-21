@@ -1,25 +1,8 @@
 {% macro jsResources() %}
     {% javascripts
         '@UserBundle/Resources/public/js/components.jade.js'
-
-        '@UserBundle/Resources/assets/models/user/User.js'
-        '@UserBundle/Resources/assets/models/user/UserCollection.js'
-        '@UserBundle/Resources/assets/models/roleGroup/RoleGroup.js'
-        '@UserBundle/Resources/assets/models/roleGroup/RoleGroupCollection.js'
-
-        '@UserBundle/Resources/assets/components/app/UserRouter.js'
-        '@UserBundle/Resources/assets/components/app/UserServiceDefinition.js'
-
-        '@UserBundle/Resources/assets/components/usersPage/UsersPageView.js'
-        '@UserBundle/Resources/assets/components/userList/UserListView.js'
-        '@UserBundle/Resources/assets/components/userEditor/UserEditorView.js'
-        '@UserBundle/Resources/assets/components/user/UserView.js'
-        '@UserBundle/Resources/assets/components/userParameters/UserParametersView.js'
-        '@UserBundle/Resources/assets/components/userRoles/UserRolesView.js'
-        '@UserBundle/Resources/assets/components/userGroups/UserGroupsView.js'
-        '@UserBundle/Resources/assets/components/roleGroupsList/RoleGroupsListView.js'
-        '@UserBundle/Resources/assets/components/roleGroupEditorPopup/RoleGroupEditorPopupView.js'
-        '@UserBundle/Resources/assets/components/roleGroupsPage/RoleGroupsPageView.js'
+        '@UserBundle/Resources/assets/models/*/*.js'
+        '@UserBundle/Resources/assets/components/*/*.js'
     %}
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
