@@ -2,6 +2,7 @@
 
 namespace Sokil\UserBundle\Controller;
 
+use Sokil\UserBundle\Entity\UserAttribute;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -16,6 +17,35 @@ class UserAttributeController extends Controller
      */
     public function listAction(Request $request)
     {
-        return new JsonResponse([]);
+        // check access
+        if (!$this->isGranted('ROLE_USER_MANAGER')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // get list
+        $userAttributeList = $this
+            ->getDoctrine()
+            ->getManager()
+            ->getRepository('UserBundle:UserAttribute')
+            ->findAll();
+
+
+        return new JsonResponse([
+            'attributes' => array_map(
+                function(UserAttribute $userAttribute) {
+                    return [
+                        'id' => $userAttribute->getId(),
+                        'name' => $userAttribute->getName(),
+                        'type' => $userAttribute->getType(),
+                        'printFormat' => $userAttribute->getPrintFormat(),
+                        'defaultValue' => $userAttribute->getDefaultValue(),
+                        'description' => $userAttribute->getDescription(),
+                        'translateable' => $userAttribute->isTranslateable(),
+                        'defaultValueGetFromCreator' => $userAttribute->isDefaultValueGetFromCreator(),
+                    ];
+                },
+                $userAttributeList
+            ),
+        ]);
     }
 }
