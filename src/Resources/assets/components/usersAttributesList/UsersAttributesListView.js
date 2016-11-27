@@ -3,24 +3,38 @@ var UsersAttributesListView = ListView.extend({
     columns: function() {
         return [
             {
-                caption: app.t('user_attribute.name'),
+                caption: app.t('user_attribute_list.name'),
                 name: 'name'
             },
             {
-                caption: app.t('user_attribute.description'),
+                caption: app.t('user_attribute_list.description'),
                 name: 'description'
             },
             {
-                caption: app.t('user_attribute.type'),
+                caption: app.t('user_attribute_list.type'),
                 name: 'type'
             },
             {
-                caption: app.t('user_attribute.printFormat'),
+                caption: app.t('user_attribute_list.printFormat'),
                 name: 'printFormat'
             },
             {
-                caption: app.t('user_attribute.defaultValue'),
+                caption: app.t('user_attribute_list.defaultValue'),
                 name: 'defaultValue'
+            }
+        ];
+    },
+
+    buttons: function() {
+        return [
+            {
+                name: 'edit',
+                class: 'btn btn-default btn-xs',
+                icon: 'glyphicon glyphicon-pencil',
+                caption: app.t('user_attribute_list.edit'),
+                click: function() {
+                    alert('edit');
+                }
             }
         ];
     }

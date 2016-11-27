@@ -1,7 +1,7 @@
 i18n.addMessages({
-    'user_attribute.name': 'Название',
-    'user_attribute.description': 'Описание',
-    'user_attribute.type': 'Тип',
-    'user_attribute.printFormat': 'Формат Вывода',
-    'user_attribute.defaultValue': 'Значение по умолчанию'
+    'user_attribute_list.name': 'Название',
+    'user_attribute_list.description': 'Описание',
+    'user_attribute_list.type': 'Тип',
+    'user_attribute_list.printFormat': 'Формат Вывода',
+    'user_attribute_list.defaultValue': 'Значение по умолчанию'
 });
