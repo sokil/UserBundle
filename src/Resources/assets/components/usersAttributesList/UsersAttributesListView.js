@@ -33,7 +33,7 @@ var UsersAttributesListView = ListView.extend({
                 icon: 'glyphicon glyphicon-pencil',
                 caption: app.t('user_attribute_list.edit'),
                 click: function() {
-                    alert('edit');
+                    app.popup(new UserAttributeEditorPopupView());
                 }
             }
         ];
