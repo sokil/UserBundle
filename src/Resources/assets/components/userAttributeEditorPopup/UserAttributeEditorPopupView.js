@@ -13,7 +13,7 @@ var UserAttributeEditorPopupView = PopupView.extend({
     },
 
     init: function() {
-        this.setPopup(app.render('UserAttributeEditorPopup', {
+        this.setBody(app.render('UserAttributeEditorPopup', {
 
         }));
     }
