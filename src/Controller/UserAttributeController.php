@@ -8,11 +8,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * @Route("/users/attributes/")
+ */
 class UserAttributeController extends Controller
 {
     /**
-     * @Route("/users/attributes", name="users_attributes_list")
+     * @Route("", name="users_attributes_list")
      * @Method({"GET"})
      */
     public function listAction(Request $request)
@@ -29,23 +33,52 @@ class UserAttributeController extends Controller
             ->getRepository('UserBundle:UserAttribute')
             ->findAll();
 
-
+        // return json
         return new JsonResponse([
             'attributes' => array_map(
                 function(UserAttribute $userAttribute) {
-                    return [
-                        'id' => $userAttribute->getId(),
-                        'name' => $userAttribute->getName(),
-                        'type' => $userAttribute->getType(),
-                        'printFormat' => $userAttribute->getPrintFormat(),
-                        'defaultValue' => $userAttribute->getDefaultValue(),
-                        'description' => $userAttribute->getDescription(),
-                        'translateable' => $userAttribute->isTranslateable(),
-                        'defaultValueGetFromCreator' => $userAttribute->isDefaultValueGetFromCreator(),
-                    ];
+                    return $this
+                        ->get('user.user_attribute_normalizer')
+                        ->normalize($userAttribute);
                 },
                 $userAttributeList
             ),
         ]);
+    }
+
+    /**
+     * @Route("{id}", name="users_attributes_get", requirements={"id": "\d+"})
+     * @Route("new", name="users_attributes_get_new")
+     * @Method({"GET"})
+     */
+    public function getAction($id = null)
+    {
+        // check access
+        if (!$this->isGranted('ROLE_USER_MANAGER')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // get attribute
+        if (empty($id)) {
+
+        } else {
+            $userAttribute = $this
+                ->getDoctrine()
+                ->getManager()
+                ->getRepository('UserBundle:UserAttribute')
+                ->find($id);
+
+            if (empty($userAttribute)) {
+                throw new NotFoundHttpException('User attribute not found');
+            }
+        }
+
+        // normalize attribute
+        $normalizedUserAttribute = $this
+            ->get('user.user_attribute_normalizer')
+            ->normalize($userAttribute);
+
+        // send json
+        return new JsonResponse($normalizedUserAttribute);
     }
 }

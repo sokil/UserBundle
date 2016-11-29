@@ -45,5 +45,8 @@ services:
             - '@doctrine'
             - '@translator'
 
+    user.user_attribute_normalizer:
+        class: Sokil\UserBundle\Serializer\Normalizer\UserAttributeNormalizer
+
     user.serializer.normalizer.roleGroup:
         class: Sokil\UserBundle\Serializer\Normalizer\RoleGroupNormalizer
