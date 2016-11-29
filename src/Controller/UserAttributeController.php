@@ -33,6 +33,12 @@ class UserAttributeController extends Controller
             ->getRepository('UserBundle:UserAttribute')
             ->findAll();
 
+        // available types
+        $userAttributeClassMetadata = $this
+            ->getDoctrine()
+            ->getManager()
+            ->getClassMetadata(UserAttribute::class);
+
         // return json
         return new JsonResponse([
             'attributes' => array_map(
@@ -43,6 +49,7 @@ class UserAttributeController extends Controller
                 },
                 $userAttributeList
             ),
+            'availableTypes' => array_keys($userAttributeClassMetadata->discriminatorMap),
         ]);
     }
 
