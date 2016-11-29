@@ -60,8 +60,9 @@ class UserAttributeController extends Controller
 
         // get attribute
         if (empty($id)) {
-
+            $normalizedUserAttribute = [];
         } else {
+            // get attribute
             $userAttribute = $this
                 ->getDoctrine()
                 ->getManager()
@@ -71,14 +72,23 @@ class UserAttributeController extends Controller
             if (empty($userAttribute)) {
                 throw new NotFoundHttpException('User attribute not found');
             }
+
+            // normalize attribute
+            $normalizedUserAttribute = $this
+                ->get('user.user_attribute_normalizer')
+                ->normalize($userAttribute);
         }
 
-        // normalize attribute
-        $normalizedUserAttribute = $this
-            ->get('user.user_attribute_normalizer')
-            ->normalize($userAttribute);
+        // available types
+        $userAttributeClassMetadata = $this
+            ->getDoctrine()
+            ->getManager()
+            ->getClassMetadata(UserAttribute::class);
 
         // send json
-        return new JsonResponse($normalizedUserAttribute);
+        return new JsonResponse([
+            'attribute' => $normalizedUserAttribute,
+            'availableTypes' => array_keys($userAttributeClassMetadata->discriminatorMap),
+        ]);
     }
 }
