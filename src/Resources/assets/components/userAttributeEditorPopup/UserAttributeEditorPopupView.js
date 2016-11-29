@@ -7,14 +7,14 @@ var UserAttributeEditorPopupView = PopupView.extend({
         return [
             {
                 class: 'btn-primary',
-                title: app.t('user_attribute_editor_popup.save')
+                title: app.t('user_attribute_editor_popup.button.save')
             }
         ]
     },
 
     init: function() {
         this.setBody(app.render('UserAttributeEditorPopup', {
-
+            attribute: {}
         }));
     }
 });
