@@ -32,8 +32,10 @@ var UsersAttributesListView = ListView.extend({
                 class: 'btn btn-default btn-xs',
                 icon: 'glyphicon glyphicon-pencil',
                 caption: app.t('user_attribute_list.edit'),
-                click: function() {
-                    app.popup(new UserAttributeEditorPopupView());
+                click: function(e, attributeId, view) {
+                    app.popup(new UserAttributeEditorPopupView({
+                        model: view.collection.get(attributeId)
+                    }));
                 }
             }
         ];

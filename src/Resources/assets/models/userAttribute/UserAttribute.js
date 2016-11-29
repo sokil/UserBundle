@@ -1,16 +1,18 @@
-var UserAttribute = Backbone.Model.extend({
+var UserAttribute = Backbone.Model.extend(_.extend({},
+    ModelFetchDefaultsTrait,
+    {
+        urlRoot: '/users/attributes',
 
-    urlRoot: '/users/attributes',
-    
-    availableTypes: [],
+        availableTypes: [],
 
-    parse: function(response, options) {
-        if (options.collection) {
-            this.availableTypes = options.collection.availableTypes;
-            return response;
-        } else {
-            this.availableTypes = response.availableTypes;
-            return response.attribute;
+        parse: function(response, options) {
+            if (options.collection) {
+                this.availableTypes = options.collection.availableTypes;
+                return response;
+            } else {
+                this.availableTypes = response.availableTypes;
+                return response.attribute;
+            }
         }
     }
-});
+));
