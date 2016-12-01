@@ -57,6 +57,5 @@ var UserRouter = Marionette.AppRouter.extend({
         app.rootView.content.show(new UsersAttributesListView({
             collection: collection
         }));
-        collection.fetch();
     }
 });

@@ -14,7 +14,8 @@ var UserAttributeEditorPopupView = PopupView.extend({
 
     init: function() {
         this.setBody(app.render('UserAttributeEditorPopup', {
-            attribute: {}
+            attribute: this.model.toJSON(),
+            availableTypes: this.model.availableTypes
         }));
     }
 });
