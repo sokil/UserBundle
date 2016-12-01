@@ -7,9 +7,18 @@ var UserAttributeEditorPopupView = PopupView.extend({
         return [
             {
                 class: 'btn-primary',
-                title: app.t('user_attribute_editor_popup.button.save')
+                title: app.t('user_attribute_editor_popup.button.save'),
+                attributes: {
+                    "data-save": true
+                }
             }
         ]
+    },
+
+    events: {
+        'click [data-save]': function() {
+            alert('Save');
+        }
     },
 
     init: function() {
