@@ -26,18 +26,14 @@ class UserAttributeController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        // get list
-        $userAttributeList = $this
+        // repository
+        $userAttributeRepository = $this
             ->getDoctrine()
             ->getManager()
-            ->getRepository('UserBundle:UserAttribute')
-            ->findAll();
+            ->getRepository('UserBundle:UserAttribute');
 
-        // available types
-        $userAttributeClassMetadata = $this
-            ->getDoctrine()
-            ->getManager()
-            ->getClassMetadata(UserAttribute::class);
+        // get list
+        $userAttributeList = $userAttributeRepository->findAll();
 
         // return json
         return new JsonResponse([
@@ -49,7 +45,9 @@ class UserAttributeController extends Controller
                 },
                 $userAttributeList
             ),
-            'availableTypes' => array_keys($userAttributeClassMetadata->discriminatorMap),
+            'availableTypes' => $this
+                ->get('user.converter.entity_discriminator_map')
+                ->getDiscriminatorMap(UserAttribute::class),
         ]);
     }
 
@@ -65,17 +63,17 @@ class UserAttributeController extends Controller
             throw $this->createAccessDeniedException();
         }
 
+        $userAttributeRepository = $this
+            ->getDoctrine()
+            ->getManager()
+            ->getRepository('UserBundle:UserAttribute');
+
         // get attribute
         if (empty($id)) {
             $normalizedUserAttribute = [];
         } else {
             // get attribute
-            $userAttribute = $this
-                ->getDoctrine()
-                ->getManager()
-                ->getRepository('UserBundle:UserAttribute')
-                ->find($id);
-
+            $userAttribute = $userAttributeRepository->find($id);
             if (empty($userAttribute)) {
                 throw new NotFoundHttpException('User attribute not found');
             }
@@ -86,16 +84,12 @@ class UserAttributeController extends Controller
                 ->normalize($userAttribute);
         }
 
-        // available types
-        $userAttributeClassMetadata = $this
-            ->getDoctrine()
-            ->getManager()
-            ->getClassMetadata(UserAttribute::class);
-
         // send json
         return new JsonResponse([
             'attribute' => $normalizedUserAttribute,
-            'availableTypes' => array_keys($userAttributeClassMetadata->discriminatorMap),
+            'availableTypes' => $this
+                ->get('user.converter.entity_discriminator_map')
+                ->getDiscriminatorMap(UserAttribute::class),
         ]);
     }
 }

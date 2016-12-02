@@ -48,5 +48,11 @@ services:
     user.user_attribute_normalizer:
         class: Sokil\UserBundle\Serializer\Normalizer\UserAttributeNormalizer
 
-    user.serializer.normalizer.roleGroup:
+    user.serializer.normalizer.role_group:
         class: Sokil\UserBundle\Serializer\Normalizer\RoleGroupNormalizer
+
+    user.converter.entity_discriminator_map:
+        class: Sokil\UserBundle\Converter\DiscriminatorMapConverter
+        arguments:
+            - '@doctrine'
+            - '@translator'

@@ -3,7 +3,8 @@ var UserAttributeEditorPopupView = PopupView.extend({
         var title = app.t('user_attribute_editor_popup.title');
 
         if (!this.model.isNew()) {
-            title += " (" + app.t('user_attribute_editor_popup.field_type.' + this.model.get('type')) + ")";
+            var type = this.model.get('type');
+            title += " (" + this.model.availableTypes[type]['label'] + ")";
         }
 
         return title;

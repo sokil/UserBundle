@@ -96,7 +96,7 @@ class RoleGroupController extends Controller
         }
 
         return new JsonResponse(
-            $this->get('user.serializer.normalizer.roleGroup')->normalize($group)
+            $this->get('user.serializer.normalizer.role_group')->normalize($group)
         );
     }
 
@@ -159,7 +159,7 @@ class RoleGroupController extends Controller
         }
 
         return new JsonResponse(
-            $this->get('user.serializer.normalizer.roleGroup')->normalize($group)
+            $this->get('user.serializer.normalizer.role_group')->normalize($group)
         );
     }
 

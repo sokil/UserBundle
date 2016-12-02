@@ -4,6 +4,7 @@ namespace Sokil\UserBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Sokil\UserBundle\Entity\User;
+use Sokil\UserBundle\Entity\UserAttribute;
 
 class UserAttributeRepository extends EntityRepository
 {

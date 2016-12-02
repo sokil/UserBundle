@@ -20,8 +20,8 @@ class UserNormalizer implements NormalizerInterface
     /**
      * @var EntityManagerRegistry
      */
-
     private $entityManagerRegistry;
+
     /**
      * @var TranslatorInterface
      */
