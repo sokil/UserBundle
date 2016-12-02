@@ -6,13 +6,6 @@ form
     label= t('user_attribute_editor_popup.field.description')
     input.form-control(type="text", name="description", value=attribute.description)
   .form-group
-    label= t('user_attribute_editor_popup.field.type')
-    select.form-control(type="text", name="type")
-      option(value="")= t('user_attribute_editor_popup.select.type.not_selected')
-      each type in availableTypes
-        - var selected = (type === attribute.type)
-        option(value=type, selected=selected)= type
-  .form-group
     label= t('user_attribute_editor_popup.field.print_format')
     input.form-control(type="text", name="printFormat", value=attribute.printFormat)
   .form-group
