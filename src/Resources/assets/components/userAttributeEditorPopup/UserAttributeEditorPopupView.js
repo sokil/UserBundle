@@ -24,7 +24,7 @@ var UserAttributeEditorPopupView = PopupView.extend({
 
     events: {
         'click [data-save]': function() {
-            alert('Save');
+            this.save();
         }
     },
 
@@ -33,5 +33,12 @@ var UserAttributeEditorPopupView = PopupView.extend({
             attribute: this.model.toJSON(),
             availableTypes: this.model.availableTypes
         }));
+    },
+
+    save: function() {
+        var data = UrlMutator.unserializeQuery(this.$('form').serialize());
+
+        // save model
+        this.model.save(data);
     }
 });
