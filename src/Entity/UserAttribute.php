@@ -62,10 +62,21 @@ abstract class UserAttribute
      */
     protected $groups;
 
+    abstract public function getType();
 
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
     }
 
     public function getName()
@@ -73,12 +84,35 @@ abstract class UserAttribute
         return $this->name;
     }
 
+    /**
+     * @param string $defaultValue
+     * @return $this
+     */
+    public function setDefaultValue($defaultValue)
+    {
+        $this->defaultValue = $defaultValue;
+        return $this;
+    }
+
+    public function getDefaultValue()
+    {
+        return $this->defaultValue;
+    }
+
+    /**
+     * @param string $description
+     * @return $this
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
     public function getDescription()
     {
         return $this->description;
     }
-
-    abstract public function getType();
 
     public function serializeValue($value)
     {
@@ -90,9 +124,14 @@ abstract class UserAttribute
         return $value;
     }
 
-    public function setMeta(array $meta)
+    /**
+     * @param string $name
+     * @param string $value
+     * @return $this
+     */
+    public function setMeta($name, $value)
     {
-        $this->meta = $meta;
+        $this->meta[$name] = $value;
         return $this;
     }
 
@@ -109,6 +148,11 @@ abstract class UserAttribute
     public function getPrintFormat()
     {
         return !empty($this->meta['printFormat']) ? $this->meta['printFormat'] : null;
+    }
+
+    public function setPrintFormat($printFormat)
+    {
+        return $this->setMeta('printFormat', $printFormat);
     }
 
     /**
@@ -137,10 +181,5 @@ abstract class UserAttribute
     public function isTranslateable()
     {
         return !empty($this->meta['translateable']);
-    }
-
-    public function getDefaultValue()
-    {
-        return $this->defaultValue;
     }
 }

@@ -92,4 +92,60 @@ class UserAttributeController extends Controller
                 ->getDiscriminatorMap(UserAttribute::class),
         ]);
     }
+
+    /**
+     * @Route("{id}", name="users_attributes_save", requirements={"id": "\d+"})
+     * @Method({"PUT", "POST"})
+     */
+    public function saveAction(Request $request, $id)
+    {
+        // check access
+        if (!$this->isGranted('ROLE_USER_MANAGER')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $userAttributeRepository = $this
+            ->getDoctrine()
+            ->getManager()
+            ->getRepository('UserBundle:UserAttribute');
+
+        // get attribute
+        $userAttribute = $userAttributeRepository->find($id);
+        if (empty($userAttribute)) {
+            throw new NotFoundHttpException('User attribute not found');
+        }
+
+        // update fields
+        $userAttribute
+            ->setName($request->get('name'))
+            ->setDescription($request->get('description'))
+            ->setDefaultValue($request->get('defaultValue'))
+            ->setPrintFormat($request->get('printFormat'));
+
+        // validate attribute
+        $errors = $this->get('validator')->validate($userAttribute);
+        if (count($errors) > 0) {
+            return new JsonResponse([
+                'validation' => $this
+                    ->get('user.validation_errors_converter')
+                    ->constraintViolationListToArray($errors),
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        // persist
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($userAttribute);
+
+        // flush
+        try {
+            $em->flush();
+        } catch (\Exception $e) {
+            // send json
+            return new JsonResponse([
+                'errorMessage' => $e->getMessage(),
+            ]);
+        }
+
+        return new JsonResponse([]);
+    }
 }
