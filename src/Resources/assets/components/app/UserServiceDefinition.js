@@ -6,6 +6,10 @@ var UserServiceDefinition = {
         return new RoleGroupCollection();
     },
 
+    userAttributeCollection: function() {
+        return new UserAttributeCollection();
+    },
+
     /**
      * Promice of list of groups of users
      */
