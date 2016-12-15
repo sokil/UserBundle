@@ -1,4 +1,30 @@
 var UserAttributeEditorPopupView = PopupView.extend({
+    /**
+     * List of events
+     */
+    events: {
+        'click [data-save]': function() {
+            this.save();
+        }
+    },
+
+    init: function() {
+        // set body
+        this.setBody(app.render('UserAttributeEditorPopup', {
+            attribute: this.model.toJSON(),
+            availableTypes: this.model.availableTypes
+        }));
+
+        // on save close popup
+        this.listenTo(this.model, 'sync', function() {
+            this.remove();
+        });
+    },
+
+    /**
+     * Define popup title
+     * @returns {string}
+     */
     title: function() {
         var title = app.t('user_attribute_editor_popup.title');
 
@@ -10,6 +36,10 @@ var UserAttributeEditorPopupView = PopupView.extend({
         return title;
     },
 
+    /**
+     * List of buttons
+     * @returns {array}
+     */
     buttons: function() {
         return [
             {
@@ -22,23 +52,11 @@ var UserAttributeEditorPopupView = PopupView.extend({
         ]
     },
 
-    events: {
-        'click [data-save]': function() {
-            this.save();
-        }
-    },
-
-    init: function() {
-        this.setBody(app.render('UserAttributeEditorPopup', {
-            attribute: this.model.toJSON(),
-            availableTypes: this.model.availableTypes
-        }));
-    },
-
+    /**
+     * Save model
+     */
     save: function() {
         var data = UrlMutator.unserializeQuery(this.$('form').serialize());
-
-        // save model
         this.model.save(data);
     }
 });
