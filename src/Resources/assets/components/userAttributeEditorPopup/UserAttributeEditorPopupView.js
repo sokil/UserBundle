@@ -57,6 +57,6 @@ var UserAttributeEditorPopupView = PopupView.extend({
      */
     save: function() {
         var data = UrlMutator.unserializeQuery(this.$('form').serialize());
-        this.model.save(data);
+        this.model.save(data, {parse: false});
     }
 });
