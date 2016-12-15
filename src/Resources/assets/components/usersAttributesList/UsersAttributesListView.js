@@ -1,5 +1,7 @@
 var UsersAttributesListView = ListView.extend({
+
     showColumnHeader: true,
+
     columns: function() {
         return [
             {
