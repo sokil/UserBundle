@@ -179,7 +179,8 @@ user.authentication_failure_handler:
     arguments: ['@http_kernel', '@security.http_utils', {}, "@logger"]
 ```
 
-If you want to override authentification logic, configure security firewall to use this listeners:
+If you want to override authentification logic, configure security firewall to use this listeners in `./app/config/security.yml`:
+
 ```yaml
 security:
     firewalls:
