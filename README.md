@@ -58,7 +58,7 @@ user:
     prefix:   /
 ```
 
-Then set access control fot some of them in `./app/config/security.yml`:
+Then set access control for some of them in `./app/config/security.yml`:
 ```yaml
 security:
     # define encoder
@@ -164,3 +164,27 @@ In the spa twig template, add assets and configure app:
 ## User attributes
 
 User attribures based on [EAV model](https://en.wikipedia.org/wiki/Entity%E2%80%93attribute%E2%80%93value_model). Attributes represented by entities, extended from class `UserAttribute`, values represented by entity `UserAttributeValue`. Attributes associayed with users' groups, so user has only attributes, related to it's groups.
+
+## Authentication
+
+There are two event listeners, which overrides response of login request to handle ajax requests:
+
+```yaml
+user.authentication_success_handler:
+    class: Sokil\UserBundle\EventListener\AuthenticationSuccessHandler
+    arguments: ['@security.http_utils', {}]
+
+user.authentication_failure_handler:
+    class: Sokil\UserBundle\EventListener\AuthenticationFailureHandler
+    arguments: ['@http_kernel', '@security.http_utils', {}, "@logger"]
+```
+
+If you want to override authentification logic, configure security firewall to use this listeners:
+```yaml
+security:
+    firewalls:
+        main:
+            form_login:
+                success_handler: user.authentication_success_handler
+                failure_handler: user.authentication_failure_handler
+```
