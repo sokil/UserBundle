@@ -17,12 +17,6 @@ services:
     user.validation_errors_converter:
         class: Sokil\Converter\ValidationErrorsConverter
 
-    user.registration_form:
-        class: Sokil\UserBundle\Form\RegistrationFormType
-        arguments: [%fos_user.model.user.class%]
-        tags:
-            - {name: form.type, alias: user_registration_form}
-
     user.user_edit_form_handler:
         class: Sokil\UserBundle\Form\Handler\UserEditFormHandler
         arguments:
