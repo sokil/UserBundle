@@ -1,4 +1,9 @@
 services:
+    user.user_provider.email:
+        class: Sokil\UserBundle\Security\UserProvider\EmailUserProvider
+        arguments:
+            - '@user.repository.user'
+
     user.voter:
         class: Sokil\UserBundle\Voter\UserVoter
         arguments:
@@ -31,6 +36,12 @@ services:
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             - 'UserBundle:UserAttribute'
+
+    user.repository.user:
+        class: Doctrine\ORM\EntityRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments:
+            - 'UserBundle:User'
 
     user.user_normalizer:
         class: Sokil\UserBundle\Serializer\Normalizer\UserNormalizer
