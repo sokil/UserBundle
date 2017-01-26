@@ -27,5 +27,8 @@
         "psr-4": {
             "Sokil\\UserBundle\\": ["src/", "tests/"]
         }
+    },
+    "suggest": {
+        "sokil/deploy-bundle": "Deploy symfony2 apps"
     }
 }
