@@ -14,8 +14,11 @@ class RegisterController extends Controller
      */
     public function registerAction()
     {
+        $registerAction = $this->get('user.action.register');
+
         return new JsonResponse([
             'error' => 0,
+            'id' => $registerAction->execute(),
             'url' => '/',
         ]);
     }

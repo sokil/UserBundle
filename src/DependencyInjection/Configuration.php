@@ -12,6 +12,16 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('user');
 
+        $rootNode
+            ->children()
+                ->arrayNode('registration')
+                    ->children()
+                        ->scalarNode('id')
+                            ->defaultValue('user.action.register')
+                        ->end()
+                    ->end()
+            ->end();
+
         return $treeBuilder;
     }
 }
