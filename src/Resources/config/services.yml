@@ -4,8 +4,12 @@ services:
     arguments:
       - '@user.repository.user'
 
-  user.action.register:
-    class: Sokil\UserBundle\Action\Register
+  user.command_bus.command_handler.register:
+    class: Sokil\UserBundle\CommandBus\RegisterCommandHandler
+    arguments:
+      - '@doctrine.orm.default_entity_manager'
+    tags:
+      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\RegisterCommand}
 
   user.voter:
     class: Sokil\UserBundle\Voter\UserVoter

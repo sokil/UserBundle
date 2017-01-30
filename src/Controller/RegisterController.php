@@ -2,6 +2,7 @@
 
 namespace Sokil\UserBundle\Controller;
 
+use Sokil\UserBundle\CommandBus\RegisterCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -14,11 +15,13 @@ class RegisterController extends Controller
      */
     public function registerAction()
     {
-        $registerAction = $this->get('user.action.register');
+        $user = $this
+            ->get('sokil.command_bus')
+            ->handle(new RegisterCommand());
 
         return new JsonResponse([
             'error' => 0,
-            'id' => $registerAction->execute(),
+            'id' => $user->getId(),
             'url' => '/',
         ]);
     }
