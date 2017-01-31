@@ -1,0 +1,22 @@
+services:
+
+  user.command_bus.command_handler.register:
+    class: Sokil\UserBundle\CommandBus\RegisterCommandHandler
+    arguments:
+      - '@doctrine.orm.default_entity_manager'
+      - '@security.authorization_checker'
+      - '@security.token_storage'
+      - '@validator'
+    tags:
+      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\RegisterCommand}
+
+  user.command_bus.command_handler.user_manager:
+    class: Sokil\UserBundle\Form\Handler\UserManagerCommandHandler
+    arguments:
+      - '@doctrine.orm.default_entity_manager'
+      - '@fos_user.user_manager'
+      - '@security.authorization_checker'
+      - '@security.token_storage'
+      - '@validator'
+    tags:
+      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\UserManagerCommand}

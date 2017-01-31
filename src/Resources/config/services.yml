@@ -1,15 +1,11 @@
+imports:
+  - { resource: commandBusServices.yml }
+
 services:
   user.user_provider.email:
     class: Sokil\UserBundle\Security\UserProvider\EmailUserProvider
     arguments:
       - '@user.repository.user'
-
-  user.command_bus.command_handler.register:
-    class: Sokil\UserBundle\CommandBus\RegisterCommandHandler
-    arguments:
-      - '@doctrine.orm.default_entity_manager'
-    tags:
-      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\RegisterCommand}
 
   user.voter:
     class: Sokil\UserBundle\Voter\UserVoter
@@ -28,15 +24,6 @@ services:
 
   user.validation_errors_converter:
     class: Sokil\Converter\ValidationErrorsConverter
-
-  user.user_edit_form_handler:
-    class: Sokil\UserBundle\Form\Handler\UserEditFormHandler
-    arguments:
-      - '@doctrine.orm.default_entity_manager'
-      - '@fos_user.user_manager'
-      - '@security.authorization_checker'
-      - '@security.token_storage'
-      - '@validator'
 
   user.repository.user_attributes:
     class: Sokil\UserBundle\Repository\UserAttributeRepository

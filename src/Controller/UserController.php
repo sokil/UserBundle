@@ -2,6 +2,7 @@
 
 namespace Sokil\UserBundle\Controller;
 
+use Sokil\UserBundle\CommandBus\UserManagerCommand;
 use Sokil\UserBundle\Entity\User;
 use Sokil\UserBundle\Voter\UserVoter;
 
@@ -121,19 +122,19 @@ class UserController extends Controller
      */
     public function saveAction(Request $request, $id = null)
     {
-        /* @var $userManager \FOS\UserBundle\Doctrine\UserManager */
-        /* @var $formFactory \Symfony\Component\Form\FormFactory */
-        /* @var $form \Symfony\Component\Form\FormInterface */
-
         // check access
         if (!$this->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
             throw $this->createAccessDeniedException();
         }
 
-        $handler = $this->get('user.user_edit_form_handler');
 
         try {
-            $handler->handle($request);
+            $response = $this->get('sokil.command_bus')->handle(
+                new UserManagerCommand(
+                    $request->get('email'),
+                    $request->get('password')
+                )
+            );
         } catch (ValidatorException $e) {
             // convert validation errors
             $validationErrors = $this

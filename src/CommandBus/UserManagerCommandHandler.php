@@ -2,6 +2,9 @@
 
 namespace Sokil\UserBundle\Form\Handler;
 
+use Sokil\CommandBusBundle\Bus\CommandHandlerInterface;
+use Sokil\CommandBusBundle\Bus\Exception\InvalidCommandException;
+use Sokil\UserBundle\CommandBus\UserManagerCommand;
 use Sokil\UserBundle\Entity\UserAttribute;
 use Sokil\UserBundle\Entity\UserAttributeValue;
 use Sokil\UserBundle\Voter\UserVoter;
@@ -16,7 +19,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Exception\ValidatorException;
 use Doctrine\ORM\EntityManagerInterface;
 
-class UserEditFormHandler
+class UserManagerCommandHandler implements CommandHandlerInterface
 {
     /**
      * @var EntityManagerInterface
@@ -82,8 +85,12 @@ class UserEditFormHandler
 
     }
 
-    public function handle(Request $request)
+    public function handle($command)
     {
+        if (!$command instanceof UserManagerCommand) {
+            throw new InvalidCommandException('Command must be instance of ' . UserManagerCommand::class);
+        }
+
         $id = $request->get('id');
 
         $isInsert = empty($id);

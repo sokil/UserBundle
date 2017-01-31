@@ -2,7 +2,7 @@
 
 namespace Sokil\UserBundle\CommandBus;
 
-class RegisterCommand
+class UserManagerCommand
 {
     /**
      * @var string
