@@ -129,7 +129,7 @@ class UserController extends Controller
 
 
         try {
-            $response = $this->get('sokil.command_bus')->handle(
+            $this->get('sokil.command_bus')->handle(
                 new UserManagerCommand(
                     $request->get('email'),
                     $request->get('password')
