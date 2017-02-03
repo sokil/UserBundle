@@ -5,6 +5,7 @@ namespace Sokil\UserBundle\CommandBus;
 use Doctrine\ORM\EntityManagerInterface;
 use Sokil\CommandBusBundle\Bus\CommandHandlerInterface;
 use Sokil\CommandBusBundle\Bus\Exception\InvalidCommandException;
+use Sokil\CommandBusBundle\Bus\Exception\CommandUnacceptableByHandlerException;
 use Sokil\UserBundle\Entity\User;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -47,21 +48,24 @@ class RegisterCommandHandler implements CommandHandlerInterface
     /**
      * @param object $command
      *
-     * @return User
+     * @return void
      *
-     * @throws InvalidCommandException
+     * @throws CommandUnacceptableByHandlerException
      */
     public function handle($command)
     {
-        if (!$command instanceof RegisterCommand) {
-            throw new InvalidCommandException('Command must be instance of ' . RegisterCommand::class);
-        }
-
         $user = new User();
         $user
             ->setEmail($command->getEmail())
             ->setPlainPassword($command->getPassword());
+    }
 
-        return $user;
+    /**
+     * @param object $command
+     * @return bool
+     */
+    public function supports($command)
+    {
+        return $command instanceof RegisterCommand;
     }
 }

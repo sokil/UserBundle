@@ -4,6 +4,7 @@ namespace Sokil\UserBundle\Form\Handler;
 
 use Sokil\CommandBusBundle\Bus\CommandHandlerInterface;
 use Sokil\CommandBusBundle\Bus\Exception\InvalidCommandException;
+use Sokil\CommandBusBundle\Bus\Exception\CommandUnacceptableByHandlerException;
 use Sokil\UserBundle\CommandBus\UserManagerCommand;
 use Sokil\UserBundle\Entity\UserAttribute;
 use Sokil\UserBundle\Entity\UserAttributeValue;
@@ -47,19 +48,9 @@ class UserManagerCommandHandler implements CommandHandlerInterface
     private $currentUser;
 
     /**
-     * @var User
-     */
-    private $user;
-
-    /**
      * @var ValidatorInterface
      */
     private $validator;
-
-    /**
-     * @var ConstraintViolationListInterface
-     */
-    private $errors;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -85,12 +76,13 @@ class UserManagerCommandHandler implements CommandHandlerInterface
 
     }
 
+    /**
+     * @param object $command
+     * @return void
+     * @throws CommandUnacceptableByHandlerException
+     */
     public function handle($command)
     {
-        if (!$command instanceof UserManagerCommand) {
-            throw new InvalidCommandException('Command must be instance of ' . UserManagerCommand::class);
-        }
-
         $id = $request->get('id');
 
         $isInsert = empty($id);
@@ -98,60 +90,60 @@ class UserManagerCommandHandler implements CommandHandlerInterface
 
         if ($isUpdate) {
             // update
-            $this->user = $this->userManager->findUserBy(['id' => $id]);
-            if (!$this->user) {
+            $user = $this->userManager->findUserBy(['id' => $id]);
+            if (!$user) {
                 throw new \RuntimeException('User not found');
             }
 
             $validationGroups = ['Update'];
 
             // check permissions
-            if (!$this->authorizationChecker->isGranted(UserVoter::PERMISSION_EDIT, $this->user)) {
+            if (!$this->authorizationChecker->isGranted(UserVoter::PERMISSION_EDIT, $user)) {
                 throw new AccessDeniedException('Not allowed to update user');
             }
 
             // remove groups from user
             if ($request->request->has('groups')) {
-                $this->user->getGroups()->clear();
+                $user->getGroups()->clear();
             }
         } else {
             // insert
-            if (!$this->authorizationChecker->isGranted('ROLE_USER_MANAGER', $this->user)) {
+            if (!$this->authorizationChecker->isGranted('ROLE_USER_MANAGER')) {
                 throw new AccessDeniedException('Not allowed to insert user');
             }
 
             // insert
-            $this->user = $this->userManager->createUser();
+            $user = $this->userManager->createUser();
             $validationGroups = ['Registration'];
 
             // set activated
-            $this->user->setEnabled(true);
+            $user->setEnabled(true);
         }
 
         // set user data
         if ($request->request->has('email')) {
-            $this->user->setEmail($request->get('email'));
+            $user->setEmail($request->get('email'));
         }
 
         if ($request->request->has('name')) {
-            $this->user->setName($request->get('name'));
+            $user->setName($request->get('name'));
         }
 
         if ($request->request->has('phone')) {
-            $this->user->setPhone($request->get('phone'));
+            $user->setPhone($request->get('phone'));
         }
 
         // set password
         if ($request->request->has('password')) {
-            $this->user->setPlainPassword($request->get('password'));
+            $user->setPlainPassword($request->get('password'));
         }
 
         // set user roles
         if ($request->request->has('roles')) {
-            if ($this->authorizationChecker->isGranted(UserVoter::PERMISSION_CHANGE_ROLES, $this->user)) {
+            if ($this->authorizationChecker->isGranted(UserVoter::PERMISSION_CHANGE_ROLES, $user)) {
                 $roles = $request->get('roles');
                 if (is_array ($roles)) {
-                    $this->user->setRoles($roles);
+                    $user->setRoles($roles);
                 }
             }
         }
@@ -160,9 +152,9 @@ class UserManagerCommandHandler implements CommandHandlerInterface
         if ($request->request->has('groups')) {
             $groupIdList = $request->get('groups');
             if (is_array($groupIdList)) {
-                $this->user->getGroups()->clear();
+                $user->getGroups()->clear();
                 foreach ($groupIdList as $groupId) {
-                    $this->user->addGroup(
+                    $user->addGroup(
                         $this->entityManager->getReference('UserBundle:Group', $groupId)
                     );
                 }
@@ -175,10 +167,10 @@ class UserManagerCommandHandler implements CommandHandlerInterface
             // get allowed repository
             $allowedAttributes = $this->entityManager
                 ->getRepository('UserBundle:UserAttribute')
-                ->getAttributes($this->user);
+                ->getAttributes($user);
 
             // get already set values
-            $existedAttributeValues = $this->user->getAttributeValues();
+            $existedAttributeValues = $user->getAttributeValues();
 
             // set passed values
             /* @var UserAttribute $allowedAttribute */
@@ -197,8 +189,8 @@ class UserManagerCommandHandler implements CommandHandlerInterface
                         }
                         // persis default value
                         if ($defaultValue) {
-                            $this->user->addAttributeValue(new UserAttributeValue(
-                                $this->user,
+                            $user->addAttributeValue(new UserAttributeValue(
+                                $user,
                                 $this->entityManager->getReference('UserBundle:UserAttribute', $attributeId),
                                 $defaultValue
                             ));
@@ -211,8 +203,8 @@ class UserManagerCommandHandler implements CommandHandlerInterface
                 if (isset($existedAttributeValues[$attributeId])) {
                     $existedAttributeValues[$attributeId]->setValue($passedAttributeValues[$attributeId]);
                 } else {
-                    $this->user->addAttributeValue(new UserAttributeValue(
-                        $this->user,
+                    $user->addAttributeValue(new UserAttributeValue(
+                        $user,
                         $this->entityManager->getReference('UserBundle:UserAttribute', $attributeId),
                         $passedAttributeValues[$attributeId]
                     ));
@@ -222,30 +214,32 @@ class UserManagerCommandHandler implements CommandHandlerInterface
         }
 
         // validate user
-        $this->errors = $this->validator->validate(
-            $this->user,
+        $errors = $this->validator->validate(
+            $user,
             null,
             $validationGroups
         );
 
-        if (count($this->errors) > 0) {
-            throw new ValidatorException();
+        if (count($errors) > 0) {
+            return [
+                'errors' => $errors,
+            ];
         }
 
         // update user
-        $this->userManager->updateUser($this->user);
+        $this->userManager->updateUser($user);
+
+        return [
+            'user' => $user,
+        ];
     }
 
     /**
-     * @return ConstraintViolationListInterface
+     * @param object $command
+     * @return bool
      */
-    public function getErrors()
+    public function supports($command)
     {
-        return $this->errors;
-    }
-
-    public function getUser()
-    {
-        return $this->user;
+        return $command instanceof UserManagerCommand;
     }
 }

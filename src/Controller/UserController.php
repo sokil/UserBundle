@@ -127,27 +127,14 @@ class UserController extends Controller
             throw $this->createAccessDeniedException();
         }
 
+        $updateManagerCommand = new UserManagerCommand(
+            $request->get('email'),
+            $request->get('password')
+        );
 
+        // handle command
         try {
-            $response = $this->get('sokil.command_bus')->handle(
-                new UserManagerCommand(
-                    $request->get('email'),
-                    $request->get('password')
-                )
-            );
-        } catch (ValidatorException $e) {
-            // convert validation errors
-            $validationErrors = $this
-                ->get('user.validation_errors_converter')
-                ->constraintViolationListToArray($handler->getErrors());
-
-            // validate error response
-            return new JsonResponse(
-                [
-                    'validation' => $validationErrors
-                ],
-                JsonResponse::HTTP_BAD_REQUEST
-            );
+            $this->get('sokil.command_bus')->handle($updateManagerCommand);
         } catch(\Exception $e) {
             // common error response
             return new JsonResponse(
@@ -158,9 +145,25 @@ class UserController extends Controller
             );
         }
 
-        // success response
+        // show validation errors
+        if (!empty($handlerResponse['user.command_bus.command_handler.user_manager']['errors'])) {
+            // convert validation errors
+            $validationErrors = $this
+                ->get('user.validation_errors_converter')
+                ->constraintViolationListToArray($handlerResponse['user.command_bus.command_handler.user_manager']['errors']);
+
+            // validate error response
+            return new JsonResponse(
+                [
+                    'validation' => $validationErrors
+                ],
+                JsonResponse::HTTP_BAD_REQUEST
+            );
+        }
+
+        // show success response
         return new JsonResponse([
-            'id'    => $handler->getUser()->getId(),
+            'id' => $handlerResponse['user']->getId(),
         ]);
     }
 
