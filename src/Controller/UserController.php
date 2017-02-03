@@ -146,11 +146,11 @@ class UserController extends Controller
         }
 
         // show validation errors
-        if (!empty($handlerResponse['user.command_bus.command_handler.user_manager']['errors'])) {
+        if (!empty($errors)) {
             // convert validation errors
             $validationErrors = $this
                 ->get('user.validation_errors_converter')
-                ->constraintViolationListToArray($handlerResponse['user.command_bus.command_handler.user_manager']['errors']);
+                ->constraintViolationListToArray($errors);
 
             // validate error response
             return new JsonResponse(
