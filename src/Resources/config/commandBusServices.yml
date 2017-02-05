@@ -1,17 +1,28 @@
 services:
 
   user.command_bus.command_handler.register:
-    class: Sokil\UserBundle\CommandBus\RegisterCommandHandler
+    class: Sokil\UserBundle\CommandBus\RegisterUser\RegisterUserCommandHandler
     arguments:
       - '@doctrine.orm.default_entity_manager'
+      - '@validator'
+      - '%user.registration.security.roles%'
+    tags:
+      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\RegisterUser\RegisterUserCommand}
+
+  user.command_bus.command_handler.authorize_user:
+    class: Sokil\UserBundle\CommandBus\AuthorizeUser\AuthorizeUserCommandHandler
+    arguments:
       - '@security.authorization_checker'
       - '@security.token_storage'
-      - '@validator'
+      - '@security.user_checker'
+      - '@security.authentication.session_strategy'
+      - '@request_stack'
+      - '%user.registration.security.firewall%'
     tags:
-      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\RegisterCommand}
+      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\AuthorizeUser\AuthorizeUserCommand}
 
-  user.command_bus.command_handler.user_manager:
-    class: Sokil\UserBundle\Form\Handler\UserManagerCommandHandler
+  user.command_bus.command_handler.create_user:
+    class: Sokil\UserBundle\CommandBus\CreateUser\CreateUserCommandHandler
     arguments:
       - '@doctrine.orm.default_entity_manager'
       - '@fos_user.user_manager'
@@ -19,4 +30,15 @@ services:
       - '@security.token_storage'
       - '@validator'
     tags:
-      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\UserManagerCommand}
+      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\CreateUser\CreateUserHandler}
+
+  user.command_bus.command_handler.update_user:
+    class: Sokil\UserBundle\CommandBus\UpdateUser\UpdateUserCommandHandler
+    arguments:
+      - '@doctrine.orm.default_entity_manager'
+      - '@fos_user.user_manager'
+      - '@security.authorization_checker'
+      - '@security.token_storage'
+      - '@validator'
+    tags:
+      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\UpdateUser\UpdateUserHandler}

@@ -16,8 +16,11 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->arrayNode('registration')
                     ->children()
-                        ->scalarNode('id')
-                            ->defaultValue('user.action.register')
+                        ->arrayNode('security')
+                            ->children()
+                                ->scalarNode('firewall')->end()
+                                ->arrayNode('roles')->prototype('variable')->end()
+                            ->end()
                         ->end()
                     ->end()
             ->end();
