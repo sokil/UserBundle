@@ -1,7 +1,5 @@
 Sokil\UserBundle\Entity\User:
     properties:
-        name:
-            - NotBlank: {}
         email:
             - NotBlank: {}
             - Email: {checkMX: false}

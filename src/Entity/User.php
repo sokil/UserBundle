@@ -22,16 +22,6 @@ class User extends \FOS\UserBundle\Entity\User
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    protected $name;
-
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     */
-    protected $phone;
-
-    /**
      * @ORM\ManyToMany(targetEntity="Sokil\UserBundle\Entity\Group")
      * @ORM\JoinTable(
      *     name="users_groups",
@@ -59,7 +49,6 @@ class User extends \FOS\UserBundle\Entity\User
     public function __construct()
     {
         parent::__construct();
-
         $this->attributeValues = new ArrayCollection();
     }
 
@@ -85,42 +74,6 @@ class User extends \FOS\UserBundle\Entity\User
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     * @return User
-     */
-    public function setName($name = null)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string 
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Set phone
-     *
-     * @param string $phone
-     * @return User
-     */
-    public function setPhone($phone = null)
-    {
-        $this->phone = $phone;
-
-        return $this;
-    }
-
-    /**
      * Get roles directly attached to user (without inherited)
      * @return array
      */
@@ -130,31 +83,46 @@ class User extends \FOS\UserBundle\Entity\User
     }
 
     /**
-     * Get phone
+     * Get list of related group ids
      *
-     * @return string 
+     * @return int[]
      */
-    public function getPhone()
+    public function getGroupIds()
     {
-        return $this->phone;
+        $ids = array();
+
+        /* @var $group \Sokil\UserBundle\Entity\Group */
+        foreach ($this->getGroups() as $group) {
+            $ids[] = $group->getId();
+        }
+
+        return $ids;
     }
+
 
     /**
      * Get user's attributes
      *
-     * @var Collection
+     * @return Collection
      */
     public function getAttributeValues()
     {
         return $this->attributeValues;
     }
 
+    /**
+     * @param UserAttributeValue $attributeValue
+     * @return $this
+     */
     public function addAttributeValue(UserAttributeValue $attributeValue)
     {
         $this->attributeValues->set($attributeValue->getAttribute()->getId(), $attributeValue);
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getGravatarDefaultUrl()
     {
         return 'http://www.gravatar.com/avatar/' . md5(strtolower(trim($this->email)));
@@ -163,8 +131,8 @@ class User extends \FOS\UserBundle\Entity\User
     /**
      * Get gravatar url
      *
-     * @param string $size Size in pixels, defaults to 80px [ 1 - 2048 ]
-     * @param string $defaultImage Default imageset to use
+     * @param int $size Size in pixels, defaults to 80px [ 1 - 2048 ]
+     * @param string $defaultImage Default image to use
      *  - 404: do not load any image if none is associated with the email hash, instead return an HTTP 404 (File Not Found) response
      *  - mm: (mystery-man) a simple, cartoon-style silhouetted outline of a person (does not vary by email hash)
      *  - identicon: a geometric pattern based on an email hash
@@ -177,11 +145,15 @@ class User extends \FOS\UserBundle\Entity\User
      *  - pg: may contain rude gestures, provocatively dressed individuals, the lesser swear words, or mild violence.
      *  - r: may contain such things as harsh profanity, intense violence, nudity, or hard drug use.
      *  - x: may contain hardcore sexual imagery or extremely disturbing violence.
-     * @param $attributes Additional key/value attributes to include to URL
+     * @param array $attributes Additional key/value attributes to include to URL
      * @return string
      */
-    public function getGravatarUrl($size = 80, $defaultImage = 'mm', $rating = 'g', $attributes = array())
-    {
+    public function getGravatarUrl(
+        $size = 80,
+        $defaultImage = 'mm',
+        $rating = 'g',
+        array $attributes = []
+    ) {
         $params = http_build_query([
             's' => $size,
             'd' => $defaultImage,
@@ -202,10 +174,10 @@ class User extends \FOS\UserBundle\Entity\User
     }
 
     /**
-     * Undelete user
+     * Restore user
      * @return User
      */
-    public function undelete()
+    public function restore()
     {
         $this->deleted = false;
         return $this;
@@ -220,30 +192,11 @@ class User extends \FOS\UserBundle\Entity\User
         return $this->deleted;
     }
 
+    /**
+     * @return bool
+     */
     public function isEnabled()
     {
         return parent::isEnabled() && !$this->deleted;
-    }
-
-    /**
-     * Get list of related group ids
-     *
-     * @return int[]
-     */
-    public function getGroupIds()
-    {
-        $ids = array();
-
-        /* @var $group \Sokil\UserBundle\Entity\Group */
-        foreach ($this->getGroups() as $group) {
-            $ids[] = $group->getId();
-        }
-
-        return $ids;
-    }
-
-    public function __toString()
-    {
-        return $this->name;
     }
 }
