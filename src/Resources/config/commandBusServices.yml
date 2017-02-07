@@ -19,7 +19,7 @@ services:
       - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\AuthorizeUser\AuthorizeUserCommand}
 
   user.command_bus.command_handler.create_user:
-    class: Sokil\UserBundle\CommandBus\CreateUser\CreateUserCommandHandler
+    class: Sokil\UserBundle\CommandBus\ManageUser\CreateUserCommandHandler
     arguments:
       - '@doctrine.orm.default_entity_manager'
       - '@fos_user.user_manager'
@@ -27,10 +27,10 @@ services:
       - '@security.token_storage'
       - '@validator'
     tags:
-      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\CreateUser\CreateUserHandler}
+      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\ManageUser\CreateUserCommand}
 
   user.command_bus.command_handler.update_user:
-    class: Sokil\UserBundle\CommandBus\UpdateUser\UpdateUserCommandHandler
+    class: Sokil\UserBundle\CommandBus\ManageUser\UpdateUserCommandHandler
     arguments:
       - '@doctrine.orm.default_entity_manager'
       - '@fos_user.user_manager'
@@ -38,4 +38,4 @@ services:
       - '@security.token_storage'
       - '@validator'
     tags:
-      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\UpdateUser\UpdateUserHandler}
+      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\ManageUser\UpdateUserCommand}

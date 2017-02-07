@@ -1,11 +1,10 @@
 <?php
 
-namespace Sokil\UserBundle\Form\Handler;
+namespace Sokil\UserBundle\CommandBus\ManageUser;
 
-use Sokil\UserBundle\CommandBus\ManageUser\AbstractCommandHandler;
 use Sokil\UserBundle\CommandBus\UpdateUserCommand;
 
-class UserManagerCommandHandler extends AbstractCommandHandler
+class UpdateUserCommandHandler extends AbstractCommandHandler
 {
     /**
      * @param object $command

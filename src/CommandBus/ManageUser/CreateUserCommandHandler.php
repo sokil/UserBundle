@@ -1,9 +1,7 @@
 <?php
 
-namespace Sokil\UserBundle\CommandBus\CreateUser;
+namespace Sokil\UserBundle\CommandBus\ManageUser;
 
-use Sokil\UserBundle\CommandBus\ManageUser\AbstractCommandHandler;
-use Sokil\UserBundle\CommandBus\ManageUser\CreateUserCommand;
 use Sokil\UserBundle\Entity\User;
 use Sokil\UserBundle\Entity\UserAttribute;
 use Sokil\UserBundle\Entity\UserAttributeValue;
