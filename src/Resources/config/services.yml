@@ -7,6 +7,9 @@ services:
     arguments:
       - '@user.repository.user'
 
+  user.authentication_manager:
+    class: Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager
+
   user.voter:
     class: Sokil\UserBundle\Voter\UserVoter
     arguments:

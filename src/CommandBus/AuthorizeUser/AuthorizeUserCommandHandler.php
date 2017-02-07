@@ -4,34 +4,21 @@ namespace Sokil\UserBundle\CommandBus\AuthorizeUser;
 
 use Sokil\CommandBusBundle\Bus\CommandHandlerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Http\Session\SessionAuthenticationStrategyInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 
 class AuthorizeUserCommandHandler implements CommandHandlerInterface
 {
-
     /**
-     * @var AuthorizationCheckerInterface
+     * @var AuthenticationManagerInterface
      */
-    private $authorizationChecker;
+    private $authenticationManager;
 
     /**
      * @var TokenStorageInterface
      */
     private $tokenStorage;
-
-    /**
-     * @var UserCheckerInterface
-     */
-    private $userChecker;
-
-    /**
-     * @var SessionAuthenticationStrategyInterface
-     */
-    private $sessionStrategy;
 
     /**
      * @var string
@@ -44,19 +31,13 @@ class AuthorizeUserCommandHandler implements CommandHandlerInterface
     private $requestStack;
 
     public function __construct(
-        AuthorizationCheckerInterface $authorizationChecker,
+        AuthenticationManagerInterface $authenticationManager,
         TokenStorageInterface $tokenStorage,
-        UserCheckerInterface $userChecker,
-        SessionAuthenticationStrategyInterface $sessionStrategy,
-        RequestStack $requestStack,
         $firewallName
     ) {
-        $this->authorizationChecker = $authorizationChecker;
+        $this->authenticationManager = $authenticationManager;
         $this->tokenStorage = $tokenStorage;
-        $this->userChecker = $userChecker;
-        $this->sessionStrategy = $sessionStrategy;
         $this->firewallName = $firewallName;
-        $this->requestStack = $requestStack;
     }
 
     /**
@@ -67,26 +48,21 @@ class AuthorizeUserCommandHandler implements CommandHandlerInterface
     {
         $user = $command->getUser();
 
-        // do some stuff
-        $this->userChecker->checkPostAuth($user);
-
         // create auth token
-        $token = new UsernamePasswordToken(
+        $unauthenticatedToken = new UsernamePasswordToken(
             $user,
             null,
             $this->firewallName,
             $user->getRoles()
         );
 
-        // do some stuff
-        $this->sessionStrategy->onAuthentication(
-            $this->requestStack->getCurrentRequest(),
-            $token
-        );
+        // authenticate
+        $authenticatedToken = $this
+            ->authenticationManager
+            ->authenticate($unauthenticatedToken);
 
         // set token
-        $this->tokenStorage->setToken($token);
-
+        $this->tokenStorage->setToken($authenticatedToken);
     }
 
     /**

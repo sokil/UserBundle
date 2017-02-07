@@ -12,11 +12,8 @@ services:
   user.command_bus.command_handler.authorize_user:
     class: Sokil\UserBundle\CommandBus\AuthorizeUser\AuthorizeUserCommandHandler
     arguments:
-      - '@security.authorization_checker'
+      - '@security.authentication.manager'
       - '@security.token_storage'
-      - '@security.user_checker'
-      - '@security.authentication.session_strategy'
-      - '@request_stack'
       - '%user.registration.security.firewall%'
     tags:
       - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\AuthorizeUser\AuthorizeUserCommand}
