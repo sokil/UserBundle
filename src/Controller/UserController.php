@@ -2,6 +2,9 @@
 
 namespace Sokil\UserBundle\Controller;
 
+use Sokil\CommandBusBundle\Bus\Exception\InvalidCommandException;
+use Sokil\UserBundle\CommandBus\ManageUser\CreateUserCommand;
+use Sokil\UserBundle\CommandBus\UpdateUserCommand;
 use Sokil\UserBundle\CommandBus\UserManagerCommand;
 use Sokil\UserBundle\Entity\User;
 use Sokil\UserBundle\Voter\UserVoter;
@@ -12,6 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -116,6 +120,11 @@ class UserController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @param int $id
+     *
+     * @return JsonResponse
+     *
      * @Route("/users/{id}", name="save_user", requirements={"id": "\d+"})
      * @Route("/users", name="save_new_user")
      * @Method({"PUT", "POST", "PATCH"})
@@ -127,16 +136,51 @@ class UserController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        $updateManagerCommand = new UserManagerCommand(
-            $request->get('email'),
-            $request->get('password')
-        );
+        // create command
+        if (empty($id)) {
+            // check permission
+            if (!$this->isGranted('ROLE_USER_MANAGER')) {
+                throw new AccessDeniedHttpException('Not allowed to insert user');
+            }
+            // create user instance
+            $user = new User();
+            // create command
+            $command = new CreateUserCommand($user);
+        } else {
+            // find user
+            $user = $this->getDoctrine()->getRepository('UserBundle:User')->find($id);
+            if (empty($user)) {
+                throw new NotFoundHttpException('User not found');
+            }
+            // check permissions
+            if (!$this->isGranted(UserVoter::PERMISSION_EDIT, $user)) {
+                throw new AccessDeniedHttpException('Not allowed to update user');
+            }
+            // create command
+            $command = new UpdateUserCommand($user);
+        }
+
+        // set user params to handle
+        $command
+            ->setEmail($request->get('email'))
+            ->setPassword($request->get('password'))
+            ->setRoles($request->get('roles'))
+            ->setGroups($request->get('groups'))
+            ->setAttributeValues($request->get('attributeValues'));
 
         // handle command
         try {
-            $this->get('sokil.command_bus')->handle($updateManagerCommand);
+            $this->get('sokil.command_bus')->handle($command);
+        } catch (InvalidCommandException $e) {
+            return new JsonResponse(
+                [
+                    'validation' => $this
+                        ->get('user.validation_errors_converter')
+                        ->constraintViolationListToArray($e->getConstraintViolationList())
+                ],
+                JsonResponse::HTTP_BAD_REQUEST
+            );
         } catch(\Exception $e) {
-            // common error response
             return new JsonResponse(
                 [
                     'message'       => $e->getMessage(),
@@ -145,25 +189,9 @@ class UserController extends Controller
             );
         }
 
-        // show validation errors
-        if (!empty($errors)) {
-            // convert validation errors
-            $validationErrors = $this
-                ->get('user.validation_errors_converter')
-                ->constraintViolationListToArray($errors);
-
-            // validate error response
-            return new JsonResponse(
-                [
-                    'validation' => $validationErrors
-                ],
-                JsonResponse::HTTP_BAD_REQUEST
-            );
-        }
-
         // show success response
         return new JsonResponse([
-            'id' => $handlerResponse['user']->getId(),
+            'id' => $user->getId(),
         ]);
     }
 
