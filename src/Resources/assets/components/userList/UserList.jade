@@ -3,8 +3,6 @@ table.table.table-striped.table-hover
   thead
     tr
       th
-      th= t('user.list.name')
-      th.hidden-xs.hidden-sm= t('user.list.phone')
       th
   tbody
     each user in users
@@ -13,11 +11,7 @@ table.table.table-striped.table-hover
           a(href="/#users/" + user.get('id'))
             img.img-circle(src=user.getGravatarUrl(40))
         td
-          div
-            a(href="/#users/" + user.get('id'))= user.get('name') || t('user.list.name_not_specified')
-          div
-            a(href="mailto://" + user.get('email'))= user.get('email')
-        td.hidden-xs.hidden-sm= user.get('phone')
+          a(href="mailto://" + user.get('email'))= user.get('email')
         td.text-right
           if user.hasPermission('edit')
             .visible-xs

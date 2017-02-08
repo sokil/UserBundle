@@ -23,13 +23,11 @@
       .col-md-3
         img.img-circle(src=user.getGravatarUrl(200))
       .col-md-9
-        h1= user.get('name')
+        h1= user.get('email')
         dl.dl-horizontal
           dt= t('E-mail')
           dd
             a(href=user.get('email'))= user.get('email')
-          dt= t('Phone')
-          dd= user.get('phone') ? user.get('phone') : t('Unknown')
           if user.has('attributes')
             each attribute, attributeId in user.get('attributes')
               if attribute['value']['view']

@@ -6,7 +6,5 @@ i18n.addMessages({
     'Email': 'Электронная почта',
     'Password': 'Пароль',
     'Password confirm': 'Подтвердить пароль',
-    'Name': 'Имя',
-    'Phone': 'Телефон',
     'Save': 'Сохранить'
 });

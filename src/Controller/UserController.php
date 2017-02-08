@@ -73,8 +73,6 @@ class UserController extends Controller
             'users' => array_map(function(User $user) {
                 return [
                     'id'            => $user->getId(),
-                    'name'          => $user->getName(),
-                    'phone'         => $user->getPhone(),
                     'email'         => $user->getEmail(),
                     'gravatar'      => $user->getGravatarDefaultUrl(),
                     'permissions'   => [

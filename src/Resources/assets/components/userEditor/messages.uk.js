@@ -6,7 +6,5 @@ i18n.addMessages({
     'Email': 'Електронна пошта',
     'Password': 'Пароль',
     'Password confirm': 'Підтвердити пароль',
-    'Name': 'Ім’я',
-    'Phone': 'Телефон',
     'Save': 'Зберегти'
 });
