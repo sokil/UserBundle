@@ -20,7 +20,7 @@ class RegisterController extends Controller
      */
     public function registerAction(Request $request)
     {
-        $bus = $this->get('sokil.command_bus');
+        $bus = $this->get('user.command_bus');
 
         // create user
         $user = new User();

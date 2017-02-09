@@ -1,5 +1,12 @@
 services:
 
+  user.command_bus:
+    class: Sokil\CommandBusBundle\Bus
+    arguments:
+      - "@sokil.command_bus.command_handler_service_resolver"
+    tags:
+      - {name: sokil.command_bus}
+
   user.command_bus.command_handler.register:
     class: Sokil\UserBundle\CommandBus\RegisterUser\RegisterUserCommandHandler
     arguments:
@@ -7,7 +14,10 @@ services:
       - '@validator'
       - '%user.registration.security.roles%'
     tags:
-      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\RegisterUser\RegisterUserCommand}
+      -
+        name: sokil.command_bus_handler
+        command_bus: user.command_bus
+        command_class: Sokil\UserBundle\CommandBus\RegisterUser\RegisterUserCommand
 
   user.command_bus.command_handler.authorize_user:
     class: Sokil\UserBundle\CommandBus\AuthorizeUser\AuthorizeUserCommandHandler
@@ -16,7 +26,10 @@ services:
       - '@security.token_storage'
       - '%user.registration.security.firewall%'
     tags:
-      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\AuthorizeUser\AuthorizeUserCommand}
+      -
+        name: sokil.command_bus_handler
+        command_bus: user.command_bus
+        command_class: Sokil\UserBundle\CommandBus\AuthorizeUser\AuthorizeUserCommand
 
   user.command_bus.command_handler.create_user:
     class: Sokil\UserBundle\CommandBus\ManageUser\CreateUserCommandHandler
@@ -27,7 +40,10 @@ services:
       - '@security.token_storage'
       - '@validator'
     tags:
-      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\ManageUser\CreateUserCommand}
+      -
+        name: sokil.command_bus_handler
+        command_bus: user.command_bus
+        command_class: Sokil\UserBundle\CommandBus\ManageUser\CreateUserCommand
 
   user.command_bus.command_handler.update_user:
     class: Sokil\UserBundle\CommandBus\ManageUser\UpdateUserCommandHandler
@@ -38,4 +54,7 @@ services:
       - '@security.token_storage'
       - '@validator'
     tags:
-      - {name: sokil.command_bus_handler, command_class: Sokil\UserBundle\CommandBus\ManageUser\UpdateUserCommand}
+      -
+        name: sokil.command_bus_handler
+        command_bus: user.command_bus
+        command_class: Sokil\UserBundle\CommandBus\ManageUser\UpdateUserCommand

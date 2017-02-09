@@ -168,7 +168,7 @@ class UserController extends Controller
 
         // handle command
         try {
-            $this->get('sokil.command_bus')->handle($command);
+            $this->get('user.command_bus')->handle($command);
         } catch (InvalidCommandException $e) {
             return new JsonResponse(
                 [
