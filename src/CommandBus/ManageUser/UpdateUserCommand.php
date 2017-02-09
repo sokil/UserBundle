@@ -1,6 +1,6 @@
 <?php
 
-namespace Sokil\UserBundle\CommandBus;
+namespace Sokil\UserBundle\CommandBus\ManageUser;
 
 use Sokil\UserBundle\CommandBus\ManageUser\AbstractCommand;
 

@@ -2,8 +2,6 @@
 
 namespace Sokil\UserBundle\CommandBus\ManageUser;
 
-use Sokil\UserBundle\CommandBus\UpdateUserCommand;
-
 class UpdateUserCommandHandler extends AbstractCommandHandler
 {
     /**

@@ -4,8 +4,7 @@ namespace Sokil\UserBundle\Controller;
 
 use Sokil\CommandBusBundle\Bus\Exception\InvalidCommandException;
 use Sokil\UserBundle\CommandBus\ManageUser\CreateUserCommand;
-use Sokil\UserBundle\CommandBus\UpdateUserCommand;
-use Sokil\UserBundle\CommandBus\UserManagerCommand;
+use Sokil\UserBundle\CommandBus\ManageUser\UpdateUserCommand;
 use Sokil\UserBundle\Entity\User;
 use Sokil\UserBundle\Voter\UserVoter;
 
@@ -161,10 +160,22 @@ class UserController extends Controller
         // set user params to handle
         $command
             ->setEmail($request->get('email'))
-            ->setPassword($request->get('password'))
-            ->setRoles($request->get('roles'))
-            ->setGroups($request->get('groups'))
-            ->setAttributeValues($request->get('attributeValues'));
+            ->setPassword($request->get('password'));
+
+        $roles = $request->get('roles');
+        if (is_array($roles)) {
+            $command->setRoles($roles);
+        }
+
+        $groups = $request->get('groups');
+        if (is_array($groups)) {
+            $command->setGroups($request->get('groups'));
+        }
+
+        $attributeValues = $request->get('attributeValues');
+        if ($attributeValues) {
+            $command->setAttributeValues($request->get('attributeValues'));
+        }
 
         // handle command
         try {
