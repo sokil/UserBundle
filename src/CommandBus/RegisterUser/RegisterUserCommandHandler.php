@@ -3,9 +3,8 @@
 namespace Sokil\UserBundle\CommandBus\RegisterUser;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Sokil\CommandBusBundle\Bus\CommandHandlerInterface;
-use Sokil\CommandBusBundle\Bus\Exception\InvalidCommandException;
-use Sokil\UserBundle\CommandBus\RegisterUser\RegisterUserCommand;
+use Sokil\CommandBusBundle\CommandBus\CommandHandlerInterface;
+use Sokil\CommandBusBundle\CommandBus\Exception\InvalidCommandException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class RegisterUserCommandHandler implements CommandHandlerInterface

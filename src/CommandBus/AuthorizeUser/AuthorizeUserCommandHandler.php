@@ -2,7 +2,7 @@
 
 namespace Sokil\UserBundle\CommandBus\AuthorizeUser;
 
-use Sokil\CommandBusBundle\Bus\CommandHandlerInterface;
+use Sokil\CommandBusBundle\CommandBus\CommandHandlerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\HttpFoundation\RequestStack;

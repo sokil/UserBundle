@@ -2,8 +2,8 @@
 
 namespace Sokil\UserBundle\CommandBus\ManageUser;
 
-use Sokil\CommandBusBundle\Bus\CommandHandlerInterface;
-use Sokil\CommandBusBundle\Bus\Exception\InvalidCommandException;
+use Sokil\CommandBusBundle\CommandBus\CommandHandlerInterface;
+use Sokil\CommandBusBundle\CommandBus\Exception\InvalidCommandException;
 use Sokil\UserBundle\Entity\UserAttribute;
 use Sokil\UserBundle\Entity\UserAttributeValue;
 use Sokil\UserBundle\Voter\UserVoter;
