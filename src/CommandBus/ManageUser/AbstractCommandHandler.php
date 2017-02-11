@@ -83,6 +83,22 @@ abstract class AbstractCommandHandler implements CommandHandlerInterface
         // before modify
         $this->onBeforeModifyUser($user);
 
+        // set user parameters
+        $email = $command->getEmail();
+        if ($email) {
+            $user->setEmail($email);
+        }
+
+        $password = $command->getPassword();
+        if ($password) {
+            $user->setPassword($password);
+        }
+
+        $name = $command->getName();
+        if ($name) {
+            $user->setName($name);
+        }
+
         // set user roles
         $roles = $command->getRoles();
         if ($roles) {

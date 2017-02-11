@@ -158,9 +158,20 @@ class UserController extends Controller
         }
 
         // set user params to handle
-        $command
-            ->setEmail($request->get('email'))
-            ->setPassword($request->get('password'));
+        $email = $request->get('email');
+        if ($email) {
+            $command->setEmail($email);
+        }
+
+        $password = $request->get('password');
+        if ($password) {
+            $command->setPassword($password);
+        }
+
+        $name = $request->get('name');
+        if ($name) {
+            $command->setName($name);
+        }
 
         $roles = $request->get('roles');
         if (is_array($roles)) {

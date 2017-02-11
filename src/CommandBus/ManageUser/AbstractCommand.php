@@ -22,6 +22,11 @@ abstract class AbstractCommand
     protected $password;
 
     /**
+     * @var string
+     */
+    protected $name;
+
+    /**
      * @var array
      */
     protected $roles = [];
@@ -92,6 +97,22 @@ abstract class AbstractCommand
     public function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     /**

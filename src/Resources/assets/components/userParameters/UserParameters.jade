@@ -5,6 +5,9 @@ form.top-space
   .form-group
     label= t('Password')
     input(type="password", name="password", value="", class="form-control", autocomplete="off")
+  .form-group
+    label= t('Name')
+    input(type="text", name="name", value=user.get('name'), class="form-control")
   if user.has('attributes')
     each attribute, attributeId in user.get('attributes')
       if attribute.permissions.edit === true

@@ -22,6 +22,11 @@ class User extends \FOS\UserBundle\Entity\User
     protected $id;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $name;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Sokil\UserBundle\Entity\Group")
      * @ORM\JoinTable(
      *     name="users_groups",
@@ -63,6 +68,31 @@ class User extends \FOS\UserBundle\Entity\User
     }
 
     /**
+     * Set name
+     *
+     * @deprecated Name builder need to be implemented
+     * @param string $name
+     * @return User
+     */
+    public function setName($name = null)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @deprecated Name builder need to be implemented
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
      *
      * @param string $email
      * @return User
@@ -70,7 +100,9 @@ class User extends \FOS\UserBundle\Entity\User
     public function setEmail($email)
     {
         $this->setUsername($email);
-        return parent::setEmail($email);
+        parent::setEmail($email);
+
+        return $this;
     }
 
     /**
