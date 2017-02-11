@@ -8,7 +8,6 @@ use Sokil\UserBundle\Entity\UserAttribute;
 use Sokil\UserBundle\Entity\UserAttributeValue;
 use Sokil\UserBundle\Voter\UserVoter;
 use Sokil\UserBundle\Entity\User;
-use FOS\UserBundle\Doctrine\UserManager;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -20,11 +19,6 @@ abstract class AbstractCommandHandler implements CommandHandlerInterface
      * @var EntityManagerInterface
      */
     protected $entityManager;
-
-    /**
-     * @var UserManager
-     */
-    protected $userManager;
 
     /**
      * @var AuthorizationCheckerInterface
@@ -48,13 +42,11 @@ abstract class AbstractCommandHandler implements CommandHandlerInterface
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        UserManager $userManager,
         AuthorizationCheckerInterface $authorizationChecker,
         TokenStorageInterface $tokenStorage,
         ValidatorInterface $validator
     ) {
         $this->entityManager = $entityManager;
-        $this->userManager = $userManager;
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
         $this->validator = $validator;
@@ -139,7 +131,8 @@ abstract class AbstractCommandHandler implements CommandHandlerInterface
         }
 
         // update user
-        $this->userManager->updateUser($user);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
     }
 
     /**

@@ -35,7 +35,6 @@ services:
     class: Sokil\UserBundle\CommandBus\ManageUser\CreateUserCommandHandler
     arguments:
       - '@doctrine.orm.default_entity_manager'
-      - '@fos_user.user_manager'
       - '@security.authorization_checker'
       - '@security.token_storage'
       - '@validator'
@@ -49,7 +48,6 @@ services:
     class: Sokil\UserBundle\CommandBus\ManageUser\UpdateUserCommandHandler
     arguments:
       - '@doctrine.orm.default_entity_manager'
-      - '@fos_user.user_manager'
       - '@security.authorization_checker'
       - '@security.token_storage'
       - '@validator'

@@ -229,8 +229,10 @@ class UserController extends Controller
         }
 
         // get user instance
-        $userManager = $this->get('fos_user.user_manager');
-        $user = $userManager->findUserBy(['id' => $id]);
+        $user = $this
+            ->getDoctrine()
+            ->getRepository('UserBundle:User')
+            ->find(['id' => $id]);
 
         // check permissions
         if (!$this->isGranted(UserVoter::PERMISSION_EDIT, $user)) {
