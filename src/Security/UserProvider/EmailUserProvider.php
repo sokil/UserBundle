@@ -37,7 +37,7 @@ class EmailUserProvider implements UserProviderInterface
         }
 
         $user = $this->userRepository->findOneBy([
-            'emailCanonical' => $email,
+            'email' => $email,
         ]);
 
         if (!$user) {

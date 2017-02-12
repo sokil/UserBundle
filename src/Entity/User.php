@@ -6,14 +6,19 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="users")
  * @UniqueEntity("email")
  */
-class User extends \FOS\UserBundle\Entity\User
+class User implements AdvancedUserInterface, \Serializable
 {
+    const ROLE_DEFAULT = 'ROLE_USER';
+    const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -27,6 +32,52 @@ class User extends \FOS\UserBundle\Entity\User
     protected $name;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $username;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $email;
+
+    /**
+     * The salt to use for hashing
+     *
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    protected $salt;
+
+    /**
+     * Encrypted password for persistance
+     *
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    protected $password;
+
+    /**
+     * Plain password for validation.
+     * @var string
+     */
+    protected $plainPassword;
+
+    /**
+     * @var \DateTime
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $credentialsExpireAt;
+
+    /**
+     * @var array
+     * @ORM\Column(type="array")
+     */
+    protected $roles;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Sokil\UserBundle\Entity\Group")
      * @ORM\JoinTable(
      *     name="users_groups",
@@ -35,11 +86,6 @@ class User extends \FOS\UserBundle\Entity\User
      * )
      */
     protected $groups;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    protected $deleted = false;
 
     /**
      * @var Collection
@@ -51,9 +97,35 @@ class User extends \FOS\UserBundle\Entity\User
      */
     protected $attributeValues;
 
+    /**
+     * @var boolean
+     * @ORM\Column(type="boolean")
+     */
+    protected $enabled;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    protected $deleted = false;
+
+    /**
+     * @var boolean
+     * @ORM\Column(type="boolean")
+     */
+    protected $locked;
+
+    /**
+     * @var \DateTime
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $expiresAt;
+
     public function __construct()
     {
-        parent::__construct();
+        $this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
+        $this->enabled = false;
+        $this->locked = false;
+        $this->roles = array();
         $this->attributeValues = new ArrayCollection();
     }
 
@@ -92,6 +164,17 @@ class User extends \FOS\UserBundle\Entity\User
         return $this->name;
     }
 
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    public function setUsername($username)
+    {
+        $this->username = $username;
+        return $this;
+    }
+
     /**
      *
      * @param string $email
@@ -100,7 +183,76 @@ class User extends \FOS\UserBundle\Entity\User
     public function setEmail($email)
     {
         $this->setUsername($email);
-        parent::setEmail($email);
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+    /**
+     * Gets the encrypted password.
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    public function setPassword($password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword($password)
+    {
+        $this->plainPassword = $password;
+
+        return $this;
+    }
+
+    /**
+     * Removes sensitive data from the user.
+     */
+    public function eraseCredentials()
+    {
+        $this->plainPassword = null;
+    }
+
+
+    public function isCredentialsNonExpired()
+    {
+        if (null !== $this->credentialsExpireAt && $this->credentialsExpireAt->getTimestamp() < time()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param \DateTime $date
+     *
+     * @return User
+     */
+    public function setCredentialsExpireAt(\DateTime $date)
+    {
+        $this->credentialsExpireAt = $date;
 
         return $this;
     }
@@ -112,6 +264,128 @@ class User extends \FOS\UserBundle\Entity\User
     public function getOwnRoles()
     {
         return $this->roles;
+    }
+
+    public function addRole($role)
+    {
+        $role = strtoupper($role);
+        if ($role === static::ROLE_DEFAULT) {
+            return $this;
+        }
+
+        if (!in_array($role, $this->roles, true)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get user roles
+     *
+     * @return array
+     */
+    public function getRoles()
+    {
+        $roles = $this->roles;
+
+        foreach ($this->getGroups() as $group) {
+            $roles = array_merge($roles, $group->getRoles());
+        }
+
+        // we need to make sure to have at least one role
+        $roles[] = static::ROLE_DEFAULT;
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles)
+    {
+        $this->roles = array();
+
+        foreach ($roles as $role) {
+            $this->addRole($role);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $role
+     * @return boolean
+     */
+    public function hasRole($role)
+    {
+        return in_array(strtoupper($role), $this->getRoles(), true);
+    }
+
+    public function setSuperAdmin($boolean)
+    {
+        if (true === $boolean) {
+            $this->addRole(static::ROLE_SUPER_ADMIN);
+        } else {
+            $this->removeRole(static::ROLE_SUPER_ADMIN);
+        }
+
+        return $this;
+    }
+
+    public function isSuperAdmin()
+    {
+        return $this->hasRole(static::ROLE_SUPER_ADMIN);
+    }
+
+    public function removeRole($role)
+    {
+        if (false !== $key = array_search(strtoupper($role), $this->roles, true)) {
+            unset($this->roles[$key]);
+            $this->roles = array_values($this->roles);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Gets the groups granted to the user.
+     *
+     * @return Collection
+     */
+    public function getGroups()
+    {
+        return $this->groups ?: $this->groups = new ArrayCollection();
+    }
+
+    public function getGroupNames()
+    {
+        $names = array();
+        foreach ($this->getGroups() as $group) {
+            $names[] = $group->getName();
+        }
+
+        return $names;
+    }
+
+    public function hasGroup($name)
+    {
+        return in_array($name, $this->getGroupNames());
+    }
+
+    public function addGroup(GroupInterface $group)
+    {
+        if (!$this->getGroups()->contains($group)) {
+            $this->getGroups()->add($group);
+        }
+
+        return $this;
+    }
+
+    public function removeGroup(GroupInterface $group)
+    {
+        if ($this->getGroups()->contains($group)) {
+            $this->getGroups()->removeElement($group);
+        }
+
+        return $this;
     }
 
     /**
@@ -196,6 +470,21 @@ class User extends \FOS\UserBundle\Entity\User
     }
 
     /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return $this->enabled && !$this->deleted;
+    }
+
+    public function setEnabled($boolean)
+    {
+        $this->enabled = (Boolean) $boolean;
+
+        return $this;
+    }
+
+    /**
      * Delete user
      * @return User
      */
@@ -224,11 +513,74 @@ class User extends \FOS\UserBundle\Entity\User
         return $this->deleted;
     }
 
-    /**
-     * @return bool
-     */
-    public function isEnabled()
+    public function isAccountNonLocked()
     {
-        return parent::isEnabled() && !$this->deleted;
+        return !$this->locked;
+    }
+
+    public function setLocked($boolean)
+    {
+        $this->locked = $boolean;
+
+        return $this;
+    }
+
+    /**
+     * @param \DateTime $date
+     *
+     * @return User
+     */
+    public function setExpiresAt(\DateTime $date)
+    {
+        $this->expiresAt = $date;
+
+        return $this;
+    }
+
+    public function isAccountNonExpired()
+    {
+        if (null !== $this->expiresAt && $this->expiresAt->getTimestamp() < time()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function serialize()
+    {
+        return serialize(array(
+            $this->password,
+            $this->salt,
+            $this->username,
+            $this->locked,
+            $this->enabled,
+            $this->id,
+            $this->expiresAt,
+            $this->credentialsExpireAt,
+            $this->email,
+        ));
+    }
+
+    public function unserialize($serialized)
+    {
+        $data = unserialize($serialized);
+        $data = array_merge($data, array_fill(0, 2, null));
+
+        list(
+            $this->password,
+            $this->salt,
+            $this->username,
+            $this->locked,
+            $this->enabled,
+            $this->id,
+            $this->expiresAt,
+            $this->credentialsExpireAt,
+            $this->email,
+        ) = $data;
+    }
+
+    public function __toString()
+    {
+        return (string) $this->getUsername();
     }
 }
