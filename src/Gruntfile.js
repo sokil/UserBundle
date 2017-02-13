@@ -93,7 +93,8 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', [
         'newer:jade',
-        'newer:uglify'
+        'newer:uglify',
+        'newer:cssmin'
     ]);
 
     grunt.registerTask('listen', [
