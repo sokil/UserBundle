@@ -38,6 +38,7 @@ services:
       - '@security.authorization_checker'
       - '@security.token_storage'
       - '@validator'
+      - '@security.encoder_factory'
     tags:
       -
         name: sokil.command_bus_handler
@@ -51,6 +52,7 @@ services:
       - '@security.authorization_checker'
       - '@security.token_storage'
       - '@validator'
+      - '@security.encoder_factory'
     tags:
       -
         name: sokil.command_bus_handler

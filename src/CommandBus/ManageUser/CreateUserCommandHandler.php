@@ -12,7 +12,7 @@ class CreateUserCommandHandler extends AbstractCommandHandler
      * @param User $user
      * @return void
      */
-    public function onBeforeModifyUser($user)
+    public function onBeforeModifyUser(User $user)
     {
         // set activated
         $user->setEnabled(true);
@@ -28,10 +28,12 @@ class CreateUserCommandHandler extends AbstractCommandHandler
         UserAttribute $attribute,
         User $user
     ) {
+        $currentUser = $this->getCurrentUser();
+
         // get default value
         $defaultValue = $attribute->getDefaultValue();
-        if (!$defaultValue && $attribute->isDefaultValueGetFromCreator() && $this->currentUser) {
-            $currentUserAttributeValues = $this->currentUser->getAttributeValues();
+        if (!$defaultValue && $attribute->isDefaultValueGetFromCreator() && $currentUser) {
+            $currentUserAttributeValues = $currentUser->getAttributeValues();
             if (isset($currentUserAttributeValues[$attributeId])) {
                 $defaultValue = $currentUserAttributeValues[$attributeId]->getValue();
             }

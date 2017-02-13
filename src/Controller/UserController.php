@@ -2,24 +2,19 @@
 
 namespace Sokil\UserBundle\Controller;
 
-use Sokil\CommandBusBundle\Bus\Exception\InvalidCommandException;
+use Sokil\CommandBusBundle\CommandBus\Exception\InvalidCommandException;
 use Sokil\UserBundle\CommandBus\ManageUser\CreateUserCommand;
 use Sokil\UserBundle\CommandBus\ManageUser\UpdateUserCommand;
 use Sokil\UserBundle\Entity\User;
 use Sokil\UserBundle\Voter\UserVoter;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-
 use Doctrine\ORM\Tools\Pagination\Paginator;
-
-use Symfony\Component\Validator\Exception\ValidatorException;
 
 class UserController extends Controller
 {

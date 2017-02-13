@@ -60,12 +60,6 @@ class User implements AdvancedUserInterface, \Serializable
     protected $password;
 
     /**
-     * Plain password for validation.
-     * @var string
-     */
-    protected $plainPassword;
-
-    /**
      * @var \DateTime
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -215,24 +209,12 @@ class User implements AdvancedUserInterface, \Serializable
         return $this;
     }
 
-    public function getPlainPassword()
-    {
-        return $this->plainPassword;
-    }
-
-    public function setPlainPassword($password)
-    {
-        $this->plainPassword = $password;
-
-        return $this;
-    }
-
     /**
      * Removes sensitive data from the user.
      */
     public function eraseCredentials()
     {
-        $this->plainPassword = null;
+
     }
 
 

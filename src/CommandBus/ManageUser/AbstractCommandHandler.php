@@ -10,6 +10,8 @@ use Sokil\UserBundle\Voter\UserVoter;
 use Sokil\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -23,43 +25,63 @@ abstract class AbstractCommandHandler implements CommandHandlerInterface
     /**
      * @var AuthorizationCheckerInterface
      */
-    protected $authorizationChecker;
+    private $authorizationChecker;
 
     /**
      * @var TokenStorageInterface
      */
-    protected $tokenStorage;
-
-    /**
-     * @var User
-     */
-    protected $currentUser;
+    private $tokenStorage;
 
     /**
      * @var ValidatorInterface
      */
-    protected $validator;
+    private $validator;
 
+    /**
+     * @var EncoderFactoryInterface
+     */
+    private $encoderFactory;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param TokenStorageInterface $tokenStorage
+     * @param ValidatorInterface $validator
+     * @param EncoderFactoryInterface $encoderFactory
+     */
     public function __construct(
         EntityManagerInterface $entityManager,
         AuthorizationCheckerInterface $authorizationChecker,
         TokenStorageInterface $tokenStorage,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        EncoderFactoryInterface $encoderFactory
     ) {
         $this->entityManager = $entityManager;
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
         $this->validator = $validator;
+        $this->encoderFactory = $encoderFactory;
 
+    }
+
+    /**
+     * Get authorized user
+     * @return User|null
+     */
+    protected function getCurrentUser()
+    {
         // set current user
         $token = $this->tokenStorage->getToken();
-        if (null !== $token) {
-            $user = $token->getUser();
-            if (is_object($user)) {
-                $this->currentUser = $user;
-            }
+        if (null === $token) {
+            return null;
         }
 
+        $user = $token->getUser();
+        if (!is_object($user)) {
+            return null;
+        }
+
+        return $user;
     }
 
     /**
@@ -81,9 +103,9 @@ abstract class AbstractCommandHandler implements CommandHandlerInterface
             $user->setEmail($email);
         }
 
-        $password = $command->getPassword();
-        if ($password) {
-            $user->setPassword($password);
+        $plainPassword = $command->getPassword();
+        if ($plainPassword) {
+            $this->setEncodePassword($user, $plainPassword);
         }
 
         $name = $command->getName();
@@ -192,5 +214,20 @@ abstract class AbstractCommandHandler implements CommandHandlerInterface
         User $user
     ) {
         // override in child classes
+    }
+
+    /**
+     * Encode plain password
+     * @param User $user
+     * @param string $plainPassword
+     */
+    private function setEncodePassword(User $user, $plainPassword)
+    {
+        $password = $this->encoderFactory->getEncoder($user)->encodePassword(
+            $plainPassword,
+            $user->getSalt()
+        );
+
+        $user->setPassword($password);
     }
 }

@@ -3,5 +3,5 @@ Sokil\UserBundle\Entity\User:
         email:
             - NotBlank: {}
             - Email: {checkMX: false}
-        plainPassword:
+        password:
             - NotBlank: {groups: [Registration]}
