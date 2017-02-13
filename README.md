@@ -27,7 +27,9 @@ class AppKernel extends Kernel
 }
 ```
 
-Bundle declares some routes, so add them to your `./app.config/routing.yml`:
+## Configuration
+
+Bundle declares some routes, so configure them manually or add pre-configured to your `./app.config/routing.yml`:
 ```yaml
 user:
     resource: "@UserBundle/Resources/config/routing.yml"
@@ -92,45 +94,6 @@ Create tables:
 ./app/console doctrine:schema:update
 ```
 
-Bundle requires deploy so call:
-```
-npm install
-grunt
-```
-
-Bundle uses assetic so you need to register it in assetic config:
-```yaml
-assetic:
-    bundles:
-        - UserBundle
-```
-
-## Single page application
-
-Bundle builds user interface over (sokil/frontend-bundle)[https://github.com/sokil/FrontendBundle], so initialise it, as described in following manual, and add some configuration:
-
-In the spa twig template, add assets and configure app:
-
-```twig
-{% import "@UserBundle/Resources/views/macro.html.twig" as userSpa %}
-
-{{ userSpa.jsResources() }}
-
-<script type="text/javascript">
-    (function() {
-        window.app = new Application(_.extend({
-            routers: [
-                UserRouter
-            ],
-            serviceDefinition: [
-                UserServiceDefinition
-            ],
-        }));
-        window.app.start();
-    })();
-</script>
-    
-```
 
 ## User attributes
 
@@ -159,4 +122,72 @@ security:
             form_login:
                 success_handler: user.authentication_success_handler
                 failure_handler: user.authentication_failure_handler
+```
+
+## Single page application
+
+SPA is optional. If you require to have frontent for user management, you need to add dependency to [sokil/frontend-bundle](https://github.com/sokil/FrontendBundle). This bundle automate creating SPA by starting configured backbone app. Follow related manuals to start using it.
+
+Bundle uses assetic so you need to register it in assetic config:
+```yaml
+assetic:
+    bundles:
+        - UserBundle
+```
+
+Bundle requires deploy of static respources, so call next commands on every file change:
+```
+npm install
+grunt
+```
+
+You can automate deploy process by using [sokil/deploy-bundle](https://github.com/sokil/DeployBundle). Register tasks to build this bundle in app config:
+
+```yaml
+deploy:
+  config:
+    composer:
+      scripts: false
+    migrate: {}
+    npm:
+      bundles:
+        FrontendBundle: true
+        UserBundle: true
+    bower:
+      bundles:
+        FrontendBundle: true
+    grunt:
+      parallel: true
+      bundles:
+        FrontendBundle: true
+        UserBundle: true
+    asseticDump: {}
+    assetsInstall: {}
+    clearCache: {}
+  tasks:
+    updateFront: [npm, bower]
+    compileAssets: [grunt, asseticDump, assetsInstall, clearCache]
+    release: [composer, migrate, updateFront, compileAssets]
+```
+
+In the SPA twig template, add assets and configure app:
+
+```twig
+{% import "@UserBundle/Resources/views/macro.html.twig" as userSpa %}
+
+{{ userSpa.jsResources() }}
+
+<script type="text/javascript">
+    (function() {
+        window.app = new Application(_.extend({
+            routers: [
+                UserRouter
+            ],
+            serviceDefinition: [
+                UserServiceDefinition
+            ],
+        }));
+        window.app.start();
+    })();
+</script>
 ```
