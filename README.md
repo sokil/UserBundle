@@ -126,13 +126,7 @@ security:
 
 ## Single page application
 
-SPA is optional. If you require to have frontent for user management, you need to add dependency to (sokil/frontend-bundle)[https://github.com/sokil/FrontendBundle]. Follow related manuals to start using it.
-
-Bundle requires deploy so call:
-```
-npm install
-grunt
-```
+SPA is optional. If you require to have frontent for user management, you need to add dependency to [sokil/frontend-bundle](https://github.com/sokil/FrontendBundle). This bundle automate creating SPA by starting configured backbone app. Follow related manuals to start using it.
 
 Bundle uses assetic so you need to register it in assetic config:
 ```yaml
@@ -141,7 +135,13 @@ assetic:
         - UserBundle
 ```
 
-You can automate deploy process by using (sokil/deploy-bundle)[https://github.com/sokil/DeployBundle]. Register tasks to build this bundle in app config:
+Bundle requires deploy of static respources, so call next commands on every file change:
+```
+npm install
+grunt
+```
+
+You can automate deploy process by using [sokil/deploy-bundle](https://github.com/sokil/DeployBundle). Register tasks to build this bundle in app config:
 
 ```yaml
 deploy:
