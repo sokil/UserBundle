@@ -126,7 +126,7 @@ security:
 
 ## Single page application
 
-SPA is optional. If you require to has frontent for user management, you need to add dependency to (sokil/frontend-bundle)[https://github.com/sokil/FrontendBundle]. Follow related manuals to start using it.
+SPA is optional. If you require to have frontent for user management, you need to add dependency to (sokil/frontend-bundle)[https://github.com/sokil/FrontendBundle]. Follow related manuals to start using it.
 
 Bundle requires deploy so call:
 ```
