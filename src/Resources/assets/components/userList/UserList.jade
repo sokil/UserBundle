@@ -1,17 +1,14 @@
 table.table.table-striped.table-hover
   col(width=60)
-  thead
-    tr
-      th
-      th
   tbody
     each user in users
       tr(data-user-id = user.get('id'))
         td
           a(href="/#users/" + user.get('id'))
             img.img-circle(src=user.getGravatarUrl(40))
+        td= user.get('name')
         td
-          a(href="mailto://" + user.get('email'))= user.get('email')
+          a(href="mailto://" + user.get('email'), target="_blank")= user.get('email')
         td.text-right
           if user.hasPermission('edit')
             .visible-xs

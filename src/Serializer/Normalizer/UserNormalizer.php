@@ -60,6 +60,7 @@ class UserNormalizer implements NormalizerInterface
         // profile
         $profile = [
             'id' => $user->getId(),
+            'name' => $user->getName(),
             'email' => $user->getEmail(),
             'gravatar' => $user->getGravatarDefaultUrl(),
             'roles' => $user->getRoles(),
