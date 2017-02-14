@@ -65,15 +65,7 @@ class UserController extends Controller
         // return response
         return new JsonResponse([
             'users' => array_map(function(User $user) {
-                return [
-                    'id'            => $user->getId(),
-                    'email'         => $user->getEmail(),
-                    'gravatar'      => $user->getGravatarDefaultUrl(),
-                    'permissions'   => [
-                        UserVoter::PERMISSION_EDIT => $this->isGranted('edit', $user),
-                        UserVoter::PERMISSION_CHANGE_ROLES => $this->isGranted('changeRoles', $user),
-                    ]
-                ];
+                return $this->get('user.user_normalizer')->normalize($user);
             }, $users),
             'usersCount' => $paginator->count(),
         ]);

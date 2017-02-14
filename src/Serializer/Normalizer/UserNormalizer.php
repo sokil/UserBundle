@@ -12,6 +12,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class UserNormalizer implements NormalizerInterface
 {
+    const SERIALIZER_GROUP_USERLIST = 'userlist';
+
     /**
      * @var AuthorizationCheckerInterface
      */
@@ -27,8 +29,17 @@ class UserNormalizer implements NormalizerInterface
      */
     private $translator;
 
+    /**
+     * @var array
+     */
     private $userAttributeNormalizers = [];
 
+    /**
+     * UserNormalizer constructor.
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param EntityManagerRegistry $entityManagerRegistry
+     * @param TranslatorInterface $translator
+     */
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         EntityManagerRegistry $entityManagerRegistry,
@@ -44,6 +55,11 @@ class UserNormalizer implements NormalizerInterface
         if (!($user instanceof User)) {
             throw new \InvalidArgumentException('User must be instance of ' . User::class);
         }
+
+        // serializer groups
+        $serializerGroups = empty($context['groups']) || !is_array($context['groups'])
+            ? []
+            : $context['groups'];
 
         // roles
         $permissions = [
@@ -76,6 +92,11 @@ class UserNormalizer implements NormalizerInterface
             'permissions'  => $permissions,
         ];
 
+        // user list serializer groups
+        if (in_array(self::SERIALIZER_GROUP_USERLIST, $serializerGroups)) {
+            return $profile;
+        }
+
         // attributes
         $normalizedUserAttributes = $this->normalizeUserAttributes($user);
         if ($normalizedUserAttributes) {
@@ -85,6 +106,10 @@ class UserNormalizer implements NormalizerInterface
         return $profile;
     }
 
+    /**
+     * @param User $user
+     * @return array
+     */
     private function normalizeUserAttributes(User $user)
     {
         $normalizedUserAttributes = [];
@@ -139,7 +164,8 @@ class UserNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param $type UserAttributeNormalizer
+     * @param string $type
+     * @return UserAttributeNormalizer
      */
     private function getUserAttributeNormalizer($type)
     {
@@ -160,8 +186,17 @@ class UserNormalizer implements NormalizerInterface
         return $this->userAttributeNormalizers[$type];
     }
 
+    /**
+     * @param mixed $data
+     * @param null $format
+     * @return bool
+     */
     public function supportsNormalization($data, $format = null)
     {
+        if (!$data instanceof User) {
+            return false;
+        }
+
         return true;
     }
 }
