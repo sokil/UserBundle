@@ -12,7 +12,6 @@ var UserAttributeEditorPopupView = PopupView.extend({
         // set body
         this.setBody(app.render('UserAttributeEditorPopup', {
             attribute: this.model.toJSON(),
-            availableTypes: this.model.availableTypes
         }));
 
         // on save close popup

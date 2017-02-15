@@ -35,6 +35,12 @@ class UserAttributeController extends Controller
             throw $this->createAccessDeniedException();
         }
 
+        // serialize groups
+        $serializeGroups = [];
+        if ($request->get('form')) {
+            $serializeGroups[] = UserAttributeNormalizer::SERIALIZATION_GROUP_FORM;
+        }
+
         // repository
         $userAttributeRepository = $this
             ->getDoctrine()
@@ -47,10 +53,10 @@ class UserAttributeController extends Controller
         // return json
         return new JsonResponse([
             'attributes' => array_map(
-                function(UserAttribute $userAttribute) {
+                function(UserAttribute $userAttribute) use ($serializeGroups) {
                     return $this
                         ->get('user.user_attribute_normalizer')
-                        ->normalize($userAttribute);
+                        ->normalize($userAttribute, null, ['groups' => $serializeGroups]);
                 },
                 $userAttributeList
             ),
