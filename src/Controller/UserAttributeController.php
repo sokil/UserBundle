@@ -2,13 +2,22 @@
 
 namespace Sokil\UserBundle\Controller;
 
+use Sokil\CommandBusBundle\CommandBus\Exception\InvalidCommandException;
+use Sokil\UserBundle\CommandBus\ManageUserAttribute\CreateEntityUserAttributeCommand;
+use Sokil\UserBundle\CommandBus\ManageUserAttribute\CreateStringUserAttributeCommand;
+use Sokil\UserBundle\CommandBus\ManageUserAttribute\UpdateEntityUserAttributeCommand;
+use Sokil\UserBundle\CommandBus\ManageUserAttribute\UpdateStringUserAttributeCommand;
 use Sokil\UserBundle\Entity\UserAttribute;
+use Sokil\UserBundle\Serializer\Normalizer\UserAttributeNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Sokil\UserBundle\Entity\UserAttribute\StringAttribute;
+use Sokil\UserBundle\Entity\UserAttribute\EntityAttribute;
 
 /**
  * @Route("/users/attributes/")
@@ -52,100 +61,172 @@ class UserAttributeController extends Controller
     }
 
     /**
+     * @Route("new", name="users_attributes_get_new", requirements={"id": "\d+"})
      * @Route("{id}", name="users_attributes_get", requirements={"id": "\d+"})
-     * @Route("new", name="users_attributes_get_new")
      * @Method({"GET"})
      */
-    public function getAction($id = null)
+    public function getAction($id = null, Request $request)
     {
         // check access
         if (!$this->isGranted('ROLE_USER_MANAGER')) {
             throw $this->createAccessDeniedException();
         }
 
-        $userAttributeRepository = $this
-            ->getDoctrine()
-            ->getManager()
-            ->getRepository('UserBundle:UserAttribute');
-
         // get attribute
-        if (empty($id)) {
-            $normalizedUserAttribute = [];
-        } else {
-            // get attribute
+        $normalizedUserAttribute = null;
+        if ($id) {
+            $userAttributeRepository = $this
+                ->getDoctrine()
+                ->getManager()
+                ->getRepository('UserBundle:UserAttribute');
+
             $userAttribute = $userAttributeRepository->find($id);
             if (empty($userAttribute)) {
                 throw new NotFoundHttpException('User attribute not found');
             }
-
-            // normalize attribute
-            $normalizedUserAttribute = $this
-                ->get('user.user_attribute_normalizer')
-                ->normalize($userAttribute);
+        } else {
+            $type = $request->get('type');
+            if ($type === 'string') {
+                $userAttribute = new StringAttribute();
+            } else if ($type === 'entity') {
+                $userAttribute = new EntityAttribute();
+            } else {
+                throw new BadRequestHttpException('Unknown attribute type specified');
+            }
         }
 
+        // serialize groups
+        $serializeGroups = [];
+        if ($request->get('form')) {
+            $serializeGroups[] = UserAttributeNormalizer::SERIALIZATION_GROUP_FORM;
+        }
+
+        // normalize attribute
+        $normalizedUserAttribute = $this
+            ->get('user.user_attribute_normalizer')
+            ->normalize(
+                $userAttribute,
+                null,
+                [
+                    'groups' => $serializeGroups
+                ]
+            );
+
         // send json
-        return new JsonResponse([
+        return new JsonResponse(array_filter([
             'attribute' => $normalizedUserAttribute,
-            'availableTypes' => $this
-                ->get('user.converter.entity_discriminator_map')
-                ->getDiscriminatorMap(UserAttribute::class),
-        ]);
+        ]));
     }
 
     /**
-     * @Route("{id}", name="users_attributes_save", requirements={"id": "\d+"})
+     * @Route("", name="users_attributes_create")
      * @Method({"PUT", "POST"})
      */
-    public function saveAction(Request $request, $id)
+    public function createAction(Request $request)
     {
         // check access
         if (!$this->isGranted('ROLE_USER_MANAGER')) {
             throw $this->createAccessDeniedException();
         }
 
-        $userAttributeRepository = $this
-            ->getDoctrine()
-            ->getManager()
-            ->getRepository('UserBundle:UserAttribute');
+        // create command
+        $type = $request->get('type');
 
-        // get attribute
-        $userAttribute = $userAttributeRepository->find($id);
-        if (empty($userAttribute)) {
-            throw new NotFoundHttpException('User attribute not found');
+        // create attribute
+        if ($type === 'string') {
+            $command = new CreateStringUserAttributeCommand();
+            $userAttribute = new StringAttribute();
+        } else if ($type === 'entity') {
+            $command = new CreateEntityUserAttributeCommand();
+            $userAttribute = new EntityAttribute();
+        } else {
+            throw new BadRequestHttpException('Unknown attribute type specified');
         }
 
+        $command->setUserAttribute($userAttribute);
+
         // update fields
-        $userAttribute
+        $command
             ->setName($request->get('name'))
             ->setDescription($request->get('description'))
-            ->setDefaultValue($request->get('defaultValue'))
-            ->setPrintFormat($request->get('printFormat'));
+            ->setDefaultValue($request->get('defaultValue'));
 
-        // validate attribute
-        $errors = $this->get('validator')->validate($userAttribute);
-        if (count($errors) > 0) {
+        // handle creation
+        try {
+            $this->get('user.command_bus')->handle($command);
+        } catch (InvalidCommandException $e) {
             return new JsonResponse([
                 'validation' => $this
                     ->get('user.validation_errors_converter')
-                    ->constraintViolationListToArray($errors),
+                    ->constraintViolationListToArray($e->getConstraintViolationList()),
             ], JsonResponse::HTTP_BAD_REQUEST);
-        }
-
-        // persist
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($userAttribute);
-
-        // flush
-        try {
-            $em->flush();
         } catch (\Exception $e) {
-            // send json
             return new JsonResponse([
                 'errorMessage' => $e->getMessage(),
             ]);
         }
 
-        return new JsonResponse([]);
+        return new JsonResponse([
+            'id' => $userAttribute->getId(),
+        ]);
+    }
+
+    /**
+     * @Route("{id}", name="users_attributes_update", requirements={"id": "\d+"})
+     * @Method({"PUT", "POST"})
+     */
+    public function updateAction(Request $request, $id)
+    {
+        // check access
+        if (!$this->isGranted('ROLE_USER_MANAGER')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // get attribute
+        $userAttributeRepository = $this
+            ->getDoctrine()
+            ->getManager()
+            ->getRepository('UserBundle:UserAttribute');
+
+        $userAttribute = $userAttributeRepository->find($id);
+        if (empty($userAttribute)) {
+            throw new NotFoundHttpException('User attribute not found');
+        }
+
+        // create command
+        if ($userAttribute instanceof StringAttribute) {
+            $command = new UpdateStringUserAttributeCommand();
+        } else if ($userAttribute instanceof EntityAttribute) {
+            $command = new UpdateEntityUserAttributeCommand();
+        } else {
+            throw new BadRequestHttpException('Unknown attribute type specified');
+        }
+
+        $command->setUserAttribute($userAttribute);
+
+        // update fields
+        $command
+            ->setName($request->get('name'))
+            ->setDescription($request->get('description'))
+            ->setDefaultValue($request->get('defaultValue'));
+
+        // handle update
+        try {
+            $this->get('user.command_bus')->handle($command);
+        } catch (InvalidCommandException $e) {
+            return new JsonResponse([
+                'validation' => $this
+                    ->get('user.validation_errors_converter')
+                    ->constraintViolationListToArray($e->getConstraintViolationList()),
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'errorMessage' => $e->getMessage(),
+            ]);
+        }
+
+        return new JsonResponse([
+            'id' => $userAttribute->getId(),
+        ]);
     }
 }

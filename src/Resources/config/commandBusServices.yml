@@ -58,3 +58,33 @@ services:
         name: sokil.command_bus_handler
         command_bus: user.command_bus
         command_class: Sokil\UserBundle\CommandBus\ManageUser\UpdateUserCommand
+
+  user.command_bus.command_handler.create_user_attribute:
+    class: Sokil\UserBundle\CommandBus\ManageUserAttribute\CreateUserAttributeCommandHandler
+    arguments:
+      - '@doctrine.orm.default_entity_manager'
+      - '@validator'
+    tags:
+      -
+        name: sokil.command_bus_handler
+        command_bus: user.command_bus
+        command_class: Sokil\UserBundle\CommandBus\ManageUserAttribute\CreateStringUserAttributeCommand
+      -
+        name: sokil.command_bus_handler
+        command_bus: user.command_bus
+        command_class: Sokil\UserBundle\CommandBus\ManageUserAttribute\CreateEntityUserAttributeCommand
+
+  user.command_bus.command_handler.update_user_attribute:
+    class: Sokil\UserBundle\CommandBus\ManageUserAttribute\CreateUserAttributeCommandHandler
+    arguments:
+      - '@doctrine.orm.default_entity_manager'
+      - '@validator'
+    tags:
+      -
+        name: sokil.command_bus_handler
+        command_bus: user.command_bus
+        command_class: Sokil\UserBundle\CommandBus\ManageUserAttribute\UpdateStringUserAttributeCommand
+      -
+        name: sokil.command_bus_handler
+        command_bus: user.command_bus
+        command_class: Sokil\UserBundle\CommandBus\ManageUserAttribute\UpdateEntityUserAttributeCommand

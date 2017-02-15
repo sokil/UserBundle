@@ -7,6 +7,8 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class UserAttributeNormalizer implements NormalizerInterface
 {
+    const SERIALIZATION_GROUP_FORM = 'form';
+
     /**
      * Normalizes an object into a set of arrays/scalars.
      *
@@ -14,7 +16,7 @@ class UserAttributeNormalizer implements NormalizerInterface
      * @param string $format  format the normalization result will be encoded as
      * @param array  $context Context options for the normalizer
      *
-     * @return array|scalar
+     * @return array
      */
     public function normalize($userAttribute, $format = null, array $context = array())
     {
@@ -22,7 +24,13 @@ class UserAttributeNormalizer implements NormalizerInterface
             throw new \InvalidArgumentException('User attribute must be instance of ' . UserAttribute::class);
         }
 
-        return [
+        // normalization groups
+        $normalizationGroups = (!empty($context['groups']) && is_array($context['groups']))
+            ? $context['groups']
+            : [];
+
+        // prepare attribute
+        $attribute = array_filter([
             'id' => $userAttribute->getId(),
             'name' => $userAttribute->getName(),
             'type' => $userAttribute->getType(),
@@ -31,7 +39,22 @@ class UserAttributeNormalizer implements NormalizerInterface
             'description' => $userAttribute->getDescription(),
             'translateable' => $userAttribute->isTranslateable(),
             'defaultValueGetFromCreator' => $userAttribute->isDefaultValueGetFromCreator(),
-        ];
+        ]);
+
+        // schema
+        if (in_array(self::SERIALIZATION_GROUP_FORM, $normalizationGroups)) {
+            $attribute['form'] = [
+                'id' => ['type' => 'hidden'],
+                'name' => ['type' => 'text'],
+                'printFormat' => ['type' => 'text'],
+                'defaultValue' => ['type' => 'text'],
+                'description' => ['type' => 'text'],
+                'translateable' => ['type' => 'check'],
+                'defaultValueGetFromCreator' => ['type' => 'check'],
+            ];
+        }
+
+        return $attribute;
     }
 
     /**
