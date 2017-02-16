@@ -2,13 +2,14 @@ var UserAttribute = Backbone.Model
     .extend({
         urlRoot: '/users/attributes',
 
-        availableTypes: [],
+        formElements: {},
 
         parse: function(response, options) {
             if (options.collection) {
-                this.availableTypes = options.collection.availableTypes;
+                this.formElements = options.collection.formElements[response.type];
                 return response;
             } else {
+                this.formElements = response.formElements;
                 return response.attribute;
             }
         }

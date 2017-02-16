@@ -8,7 +8,6 @@ use Sokil\UserBundle\CommandBus\ManageUserAttribute\CreateStringUserAttributeCom
 use Sokil\UserBundle\CommandBus\ManageUserAttribute\UpdateEntityUserAttributeCommand;
 use Sokil\UserBundle\CommandBus\ManageUserAttribute\UpdateStringUserAttributeCommand;
 use Sokil\UserBundle\Entity\UserAttribute;
-use Sokil\UserBundle\Serializer\Normalizer\UserAttributeNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -35,35 +34,56 @@ class UserAttributeController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        // serialize groups
-        $serializeGroups = [];
-        if ($request->get('form')) {
-            $serializeGroups[] = UserAttributeNormalizer::SERIALIZATION_GROUP_FORM;
-        }
-
         // repository
         $userAttributeRepository = $this
             ->getDoctrine()
             ->getManager()
             ->getRepository('UserBundle:UserAttribute');
 
-        // get list
+        // list of entities
         $userAttributeList = $userAttributeRepository->findAll();
 
+        // get list
+        $normalizedUserAttributeList = array_map(
+            function(UserAttribute $userAttribute) {
+                return $this
+                    ->get('user.user_attribute_normalizer')
+                    ->normalize($userAttribute, null);
+            },
+            $userAttributeList
+        );
+
+        // get available types
+        $availableTypes = $this
+            ->get('user.converter.entity_discriminator_map')
+            ->getDiscriminatorMap(UserAttribute::class);
+
+        // get form elements
+        $formElements = [];
+        if ($request->get('formElements')) {
+            $userAttributeTypes = array_unique(
+                array_map(
+                    function(UserAttribute $userAttribute) {
+                        return $userAttribute->getType();
+                    },
+                    $userAttributeList
+                )
+            );
+
+            foreach ($userAttributeTypes as $userAttributeType) {
+                $formElements[$userAttributeType] = $this
+                    ->get('user.form.user_attribute.elements_definition.builder')
+                    ->getFormElementsDefinition($userAttributeType)
+                    ->getDefinition();
+            }
+        }
+
         // return json
-        return new JsonResponse([
-            'attributes' => array_map(
-                function(UserAttribute $userAttribute) use ($serializeGroups) {
-                    return $this
-                        ->get('user.user_attribute_normalizer')
-                        ->normalize($userAttribute, null, ['groups' => $serializeGroups]);
-                },
-                $userAttributeList
-            ),
-            'availableTypes' => $this
-                ->get('user.converter.entity_discriminator_map')
-                ->getDiscriminatorMap(UserAttribute::class),
-        ]);
+        return new JsonResponse(array_filter([
+            'attributes' => $normalizedUserAttributeList,
+            'availableTypes' => $availableTypes,
+            'formElements' => $formElements,
+        ]));
     }
 
     /**
@@ -101,26 +121,24 @@ class UserAttributeController extends Controller
             }
         }
 
-        // serialize groups
-        $serializeGroups = [];
-        if ($request->get('form')) {
-            $serializeGroups[] = UserAttributeNormalizer::SERIALIZATION_GROUP_FORM;
-        }
-
         // normalize attribute
         $normalizedUserAttribute = $this
             ->get('user.user_attribute_normalizer')
-            ->normalize(
-                $userAttribute,
-                null,
-                [
-                    'groups' => $serializeGroups
-                ]
-            );
+            ->normalize($userAttribute);
+
+        // form elements
+        $formElements = null;
+        if ($request->get('formElements')) {
+            $formElements = $this
+                ->get('user.form.user_attribute.elements_definition.builder')
+                ->getFormElementsDefinition($userAttribute->getType())
+                ->getDefinition();
+        }
 
         // send json
         return new JsonResponse(array_filter([
             'attribute' => $normalizedUserAttribute,
+            'formElements' => $formElements,
         ]));
     }
 

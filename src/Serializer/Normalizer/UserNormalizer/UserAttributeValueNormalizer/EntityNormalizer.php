@@ -1,6 +1,6 @@
 <?php
 
-namespace Sokil\UserBundle\Serializer\Normalizer\UserNormalizer\UserAttributeNormalizer;
+namespace Sokil\UserBundle\Serializer\Normalizer\UserNormalizer\UserAttributeValueNormalizer;
 
 use Sokil\UserBundle\Entity\UserAttribute;
 use Sokil\UserBundle\Entity\UserAttributeValue;

@@ -7,8 +7,6 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class UserAttributeNormalizer implements NormalizerInterface
 {
-    const SERIALIZATION_GROUP_FORM = 'form';
-
     /**
      * Normalizes an object into a set of arrays/scalars.
      *
@@ -30,7 +28,7 @@ class UserAttributeNormalizer implements NormalizerInterface
             : [];
 
         // prepare attribute
-        $attribute = array_filter([
+        return array_filter([
             'id' => $userAttribute->getId(),
             'name' => $userAttribute->getName(),
             'type' => $userAttribute->getType(),
@@ -40,21 +38,6 @@ class UserAttributeNormalizer implements NormalizerInterface
             'translateable' => $userAttribute->isTranslateable(),
             'defaultValueGetFromCreator' => $userAttribute->isDefaultValueGetFromCreator(),
         ]);
-
-        // schema
-        if (in_array(self::SERIALIZATION_GROUP_FORM, $normalizationGroups)) {
-            $attribute['form'] = [
-                'id' => ['type' => 'hidden'],
-                'name' => ['type' => 'text'],
-                'printFormat' => ['type' => 'text'],
-                'defaultValue' => ['type' => 'text'],
-                'description' => ['type' => 'text'],
-                'translateable' => ['type' => 'check'],
-                'defaultValueGetFromCreator' => ['type' => 'check'],
-            ];
-        }
-
-        return $attribute;
     }
 
     /**

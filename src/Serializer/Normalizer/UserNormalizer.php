@@ -173,7 +173,7 @@ class UserNormalizer implements NormalizerInterface
             return $this->userAttributeNormalizers[$type];
         }
 
-        $className = self::class . '\\UserAttributeNormalizer\\' . ucfirst(strtolower($type)) . 'Normalizer';
+        $className = self::class . '\\UserAttributeValueNormalizer\\' . ucfirst(strtolower($type)) . 'Normalizer';
         if (!class_exists($className)) {
             throw new \InvalidArgumentException('User attribute normalizer ' . $className . ' is invalid');
         }

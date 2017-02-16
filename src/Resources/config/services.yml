@@ -53,6 +53,9 @@ services:
   user.serializer.normalizer.role_group:
     class: Sokil\UserBundle\Serializer\Normalizer\RoleGroupNormalizer
 
+  user.form.user_attribute.elements_definition.builder:
+    class: Sokil\UserBundle\Form\UserAttribute\FormElementsDefinitionBuilder
+
   user.converter.entity_discriminator_map:
     class: Sokil\UserBundle\Converter\DiscriminatorMapConverter
     arguments:
