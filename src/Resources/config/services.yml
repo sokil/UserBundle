@@ -40,6 +40,14 @@ services:
     arguments:
       - 'UserBundle:User'
 
+  user.form.type.user_attribute.entity:
+    class: Sokil\UserBundle\Form\Type\UserAttribute\EntityFormType
+    tags:
+      - {name: form.type}
+
+  user.form.type.user_attribute.string:
+    class: Sokil\UserBundle\Form\Type\UserAttribute\StringFormType
+
   user.user_normalizer:
     class: Sokil\UserBundle\Serializer\Normalizer\UserNormalizer
     arguments:
@@ -52,9 +60,6 @@ services:
 
   user.serializer.normalizer.role_group:
     class: Sokil\UserBundle\Serializer\Normalizer\RoleGroupNormalizer
-
-  user.form.user_attribute.elements_definition.builder:
-    class: Sokil\UserBundle\Form\UserAttribute\FormElementsDefinitionBuilder
 
   user.converter.entity_discriminator_map:
     class: Sokil\UserBundle\Converter\DiscriminatorMapConverter

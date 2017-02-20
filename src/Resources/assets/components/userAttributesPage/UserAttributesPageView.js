@@ -17,7 +17,7 @@ var UserAttributesPageView = Marionette.LayoutView.extend({
         // fetch collection
         this.collection.fetch({
             data: {
-                formElements: 1 // show form input parameters
+                form: 1 // show form input parameters
             }
         });
     },
@@ -62,7 +62,7 @@ var UserAttributesPageView = Marionette.LayoutView.extend({
         // sync model
         model.fetch({
             data: {
-                formElements: 1,
+                form: 1,
                 type: attributeType
             }
         });

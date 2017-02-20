@@ -59,8 +59,8 @@ class UserAttributeController extends Controller
             ->getDiscriminatorMap(UserAttribute::class);
 
         // get form elements
-        $formElements = [];
-        if ($request->get('formElements')) {
+        $form = [];
+        if ($request->get('form')) {
             $userAttributeTypes = array_unique(
                 array_map(
                     function(UserAttribute $userAttribute) {
@@ -71,10 +71,8 @@ class UserAttributeController extends Controller
             );
 
             foreach ($userAttributeTypes as $userAttributeType) {
-                $formElements[$userAttributeType] = $this
-                    ->get('user.form.user_attribute.elements_definition.builder')
-                    ->getFormElementsDefinition($userAttributeType)
-                    ->getDefinition();
+                // @todo Implement me
+                $form[$userAttributeType] = [];
             }
         }
 
@@ -82,7 +80,7 @@ class UserAttributeController extends Controller
         return new JsonResponse(array_filter([
             'attributes' => $normalizedUserAttributeList,
             'availableTypes' => $availableTypes,
-            'formElements' => $formElements,
+            'form' => $form,
         ]));
     }
 
@@ -110,6 +108,8 @@ class UserAttributeController extends Controller
             if (empty($userAttribute)) {
                 throw new NotFoundHttpException('User attribute not found');
             }
+
+            $type = $userAttribute->getType();
         } else {
             $type = $request->get('type');
             if ($type === 'string') {
@@ -127,18 +127,18 @@ class UserAttributeController extends Controller
             ->normalize($userAttribute);
 
         // form elements
-        $formElements = null;
-        if ($request->get('formElements')) {
-            $formElements = $this
-                ->get('user.form.user_attribute.elements_definition.builder')
-                ->getFormElementsDefinition($userAttribute->getType())
-                ->getDefinition();
+        $form = null;
+        if ($request->get('form')) {
+            $formType = $this->get('user.form.type.user_attribute.' . $type);
+            $form = $this
+                ->get('frontend.form.serializer')
+                ->serialize($formType);
         }
 
         // send json
         return new JsonResponse(array_filter([
             'attribute' => $normalizedUserAttribute,
-            'formElements' => $formElements,
+            'form' => $form,
         ]));
     }
 
