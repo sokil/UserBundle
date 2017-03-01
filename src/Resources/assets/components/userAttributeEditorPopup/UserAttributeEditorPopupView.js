@@ -8,15 +8,46 @@ var UserAttributeEditorPopupView = PopupView.extend({
         }
     },
 
-    init: function() {
-        // set body
-        this.setBody(app.render('UserAttributeEditorPopup', {
-            attribute: this.model.toJSON(),
-        }));
+    init: function(options) {
+        var attributeType;
+
+        // Define attribute model.
+        // It must be already fetched.
+        if (this.model) {
+            attributeType = this.model.get('type');
+        } else {
+            attributeType = options.attributeType;
+            this.model = new UserAttribute;
+        }
 
         // on save close popup
         this.listenTo(this.model, 'sync', function() {
+            // hide popup
             this.remove();
+
+            // trigger event on save
+            if ("function" === typeof options.onSave) {
+                options.onSave.call(this.model);
+            }
+        });
+
+        // create schema model
+        var schemaModel = new UserAttributeSchema();
+
+        // show popup on model sync
+        this.listenTo(schemaModel, 'sync', function() {
+            // set body
+            this.setBody(app.render('UserAttributeEditorPopup', {
+                schema: schemaModel.toJSON(),
+                attribute: this.model.toJSON()
+            }));
+        });
+
+        // sync model
+        schemaModel.fetch({
+            data: {
+                type: attributeType
+            }
         });
     },
 

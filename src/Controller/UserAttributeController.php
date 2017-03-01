@@ -58,29 +58,10 @@ class UserAttributeController extends Controller
             ->get('user.converter.entity_discriminator_map')
             ->getDiscriminatorMap(UserAttribute::class);
 
-        // get form elements
-        $form = [];
-        if ($request->get('form')) {
-            $userAttributeTypes = array_unique(
-                array_map(
-                    function(UserAttribute $userAttribute) {
-                        return $userAttribute->getType();
-                    },
-                    $userAttributeList
-                )
-            );
-
-            foreach ($userAttributeTypes as $userAttributeType) {
-                // @todo Implement me
-                $form[$userAttributeType] = [];
-            }
-        }
-
         // return json
         return new JsonResponse(array_filter([
             'attributes' => $normalizedUserAttributeList,
             'availableTypes' => $availableTypes,
-            'form' => $form,
         ]));
     }
 
@@ -126,19 +107,63 @@ class UserAttributeController extends Controller
             ->get('user.user_attribute_normalizer')
             ->normalize($userAttribute);
 
-        // form elements
-        $form = null;
-        if ($request->get('form')) {
-            $formType = $this->get('user.form.type.user_attribute.' . $type);
-            $form = $this
-                ->get('frontend.form.serializer')
-                ->serialize($formType);
-        }
-
         // send json
         return new JsonResponse(array_filter([
             'attribute' => $normalizedUserAttribute,
-            'form' => $form,
+        ]));
+    }
+
+    /**
+     * @Route("schema", name="users_attributes_schema_get_new", requirements={"id": "\d+"})
+     * @Route("schema/{id}", name="users_attributes_schema_get", requirements={"id": "\d+"})
+     * @Method({"GET"})
+     */
+    public function schemaAction($id = null, Request $request)
+    {
+        // check access
+        if (!$this->isGranted('ROLE_USER_MANAGER')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // get attribute
+        $normalizedUserAttribute = null;
+        if ($id) {
+            $userAttributeRepository = $this
+                ->getDoctrine()
+                ->getManager()
+                ->getRepository('UserBundle:UserAttribute');
+
+            $userAttribute = $userAttributeRepository->find($id);
+            if (empty($userAttribute)) {
+                throw new NotFoundHttpException('User attribute not found');
+            }
+
+            $type = $userAttribute->getType();
+        } else {
+            $type = $request->get('type');
+            if ($type === 'string') {
+                $userAttribute = new StringAttribute();
+            } else if ($type === 'entity') {
+                $userAttribute = new EntityAttribute();
+            } else {
+                throw new BadRequestHttpException('Unknown attribute type specified');
+            }
+        }
+
+        // normalize attribute
+        $normalizedUserAttribute = $this
+            ->get('user.user_attribute_normalizer')
+            ->normalize($userAttribute);
+
+        $formType = $this->get('user.form.type.user_attribute.' . $type);
+
+        $formSchema = $this
+            ->get('frontend.form.serializer')
+            ->serialize($formType);
+
+        // send json
+        return new JsonResponse(array_filter([
+            'schema' => $formSchema,
         ]));
     }
 

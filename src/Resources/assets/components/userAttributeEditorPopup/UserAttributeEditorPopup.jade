@@ -1,13 +1,5 @@
 form
-  .form-group
-    label= t('user_attribute_editor_popup.field.name')
-    input.form-control(type="text", name="name", value=attribute.name)
-  .form-group
-    label= t('user_attribute_editor_popup.field.description')
-    input.form-control(type="text", name="description", value=attribute.description)
-  .form-group
-    label= t('user_attribute_editor_popup.field.print_format')
-    input.form-control(type="text", name="printFormat", value=attribute.printFormat)
-  .form-group
-    label= t('user_attribute_editor_popup.field.default_value')
-    input.form-control(type="text", name="defaultValue", value=attribute.defaultValue)
+  each schemaElement, schemaElementName in schema
+    .form-group
+      label= t('user_attribute_editor_popup.field.' + schemaElementName)
+      input.form-control(type=schemaElement.type, name=schemaElementName, value=attribute[schemaElementName])

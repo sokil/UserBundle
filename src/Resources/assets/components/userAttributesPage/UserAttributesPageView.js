@@ -15,11 +15,7 @@ var UserAttributesPageView = Marionette.LayoutView.extend({
         this.listenTo(this.collection, 'change update', this.renderAsync);
 
         // fetch collection
-        this.collection.fetch({
-            data: {
-                form: 1 // show form input parameters
-            }
-        });
+        this.collection.fetch();
     },
 
     render: function() {
@@ -46,25 +42,11 @@ var UserAttributesPageView = Marionette.LayoutView.extend({
         var $button = $(e.currentTarget);
         var attributeType = $button.data('new-attribute');
 
-        // create model
-        var model = this.collection.add(
-            {},
-            {silent: true}
-        );
-
-        // show popup on model sync
-        this.listenTo(model, 'syncDefaults', function() {
-            app.popup(new UserAttributeEditorPopupView({
-                model: model
-            }));
-        });
-
-        // sync model
-        model.fetch({
-            data: {
-                form: 1,
-                type: attributeType
+        app.popup(new UserAttributeEditorPopupView({
+            attributeType: attributeType,
+            onSave: function(model) {
+                this.collection.add(model);
             }
-        });
+        }));
     }
 });
