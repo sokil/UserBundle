@@ -9,32 +9,28 @@ var UserAttributeEditorPopupView = PopupView.extend({
     },
 
     init: function(options) {
-        var attributeType;
-
         // Define attribute model.
         // It must be already fetched.
-        if (this.model) {
-            attributeType = this.model.get('type');
-        } else {
-            attributeType = options.attributeType;
+        if (!this.model) {
             this.model = new UserAttribute;
+            this.model.set('type', options.attributeType);
         }
 
-        // on save close popup
+        // Add handler on save
         this.listenTo(this.model, 'sync', function() {
             // hide popup
             this.remove();
 
             // trigger event on save
             if ("function" === typeof options.onSave) {
-                options.onSave.call(this.model);
+                options.onSave.call(this, this.model);
             }
         });
 
         // create schema model
         var schemaModel = new UserAttributeSchema();
 
-        // show popup on model sync
+        // show popup on schema model sync
         this.listenTo(schemaModel, 'sync', function() {
             // set body
             this.setBody(app.render('UserAttributeEditorPopup', {
@@ -46,7 +42,7 @@ var UserAttributeEditorPopupView = PopupView.extend({
         // sync model
         schemaModel.fetch({
             data: {
-                type: attributeType
+                type: this.model.get('type')
             }
         });
     },

@@ -19,7 +19,7 @@ use Sokil\UserBundle\Entity\UserAttribute\StringAttribute;
 use Sokil\UserBundle\Entity\UserAttribute\EntityAttribute;
 
 /**
- * @Route("/users/attributes/")
+ * @Route("/users/attributes")
  */
 class UserAttributeController extends Controller
 {
@@ -66,8 +66,8 @@ class UserAttributeController extends Controller
     }
 
     /**
-     * @Route("new", name="users_attributes_get_new", requirements={"id": "\d+"})
-     * @Route("{id}", name="users_attributes_get", requirements={"id": "\d+"})
+     * @Route("/new", name="users_attributes_get_new", requirements={"id": "\d+"})
+     * @Route("/{id}", name="users_attributes_get", requirements={"id": "\d+"})
      * @Method({"GET"})
      */
     public function getAction($id = null, Request $request)
@@ -114,8 +114,8 @@ class UserAttributeController extends Controller
     }
 
     /**
-     * @Route("schema", name="users_attributes_schema_get_new", requirements={"id": "\d+"})
-     * @Route("schema/{id}", name="users_attributes_schema_get", requirements={"id": "\d+"})
+     * @Route("/schema", name="users_attributes_schema_get_new", requirements={"id": "\d+"})
+     * @Route("/schema/{id}", name="users_attributes_schema_get", requirements={"id": "\d+"})
      * @Method({"GET"})
      */
     public function schemaAction($id = null, Request $request)
@@ -221,7 +221,7 @@ class UserAttributeController extends Controller
     }
 
     /**
-     * @Route("{id}", name="users_attributes_update", requirements={"id": "\d+"})
+     * @Route("/{id}", name="users_attributes_update", requirements={"id": "\d+"})
      * @Method({"PUT", "POST"})
      */
     public function updateAction(Request $request, $id)

@@ -12,7 +12,9 @@ var UserAttributesPageView = Marionette.LayoutView.extend({
     initialize: function() {
         // init collection
         this.collection = app.container.get('userAttributeCollection');
-        this.listenTo(this.collection, 'change update', this.renderAsync);
+
+        // render page on collection sync
+        this.listenToOnce(this.collection, 'sync', this.renderPage);
 
         // fetch collection
         this.collection.fetch();
@@ -22,16 +24,23 @@ var UserAttributesPageView = Marionette.LayoutView.extend({
 
     },
 
-    /**
-     * Render page
-     */
-    renderAsync: function(){
-        // render page
+    renderPage: function() {
+        // show container
         this.$el.html(app.render('UserAttributesPage', {
             availableTypes: this.collection.availableTypes
         }));
 
-        // render list
+        // fill list
+        this.renderList();
+
+        // update list on collection change
+        this.listenTo(this.collection, 'update', this.renderList);
+    },
+
+    /**
+     * Render page
+     */
+    renderList: function(){
         this.list.show(new UsersAttributesListView({
             collection: this.collection
         }));
@@ -46,7 +55,7 @@ var UserAttributesPageView = Marionette.LayoutView.extend({
             attributeType: attributeType,
             onSave: function(model) {
                 this.collection.add(model);
-            }
+            }.bind(this)
         }));
     }
 });
