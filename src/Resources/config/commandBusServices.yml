@@ -75,7 +75,7 @@ services:
         command_class: Sokil\UserBundle\CommandBus\ManageUserAttribute\CreateEntityUserAttributeCommand
 
   user.command_bus.command_handler.update_user_attribute:
-    class: Sokil\UserBundle\CommandBus\ManageUserAttribute\CreateUserAttributeCommandHandler
+    class: Sokil\UserBundle\CommandBus\ManageUserAttribute\UpdateUserAttributeCommandHandler
     arguments:
       - '@doctrine.orm.default_entity_manager'
       - '@validator'
