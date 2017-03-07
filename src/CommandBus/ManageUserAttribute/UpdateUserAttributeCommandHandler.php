@@ -35,14 +35,8 @@ class UpdateUserAttributeCommandHandler implements CommandHandlerInterface
      */
     public function handle($command)
     {
-        // create attribute
-        if ($command instanceof UpdateStringUserAttributeCommand) {
-            $userAttribute = new StringAttribute();
-        } elseif ($command instanceof UpdateEntityUserAttributeCommand) {
-            $userAttribute = new EntityAttribute();
-        } else {
-            throw new InvalidCommandException('Unknown attribute type specified');
-        }
+        // get user attribute
+        $userAttribute = $command->getUserAttribute();
 
         // set attribute parameters
         $userAttribute
