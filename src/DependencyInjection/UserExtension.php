@@ -15,11 +15,14 @@ class UserExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        // define roles, added to user on registration
-        $container->setParameter('user.registration.security.roles', $config['registration']['security']['roles']);
+        // if registration allowed
+        if (!empty($config['registration'])) {
+            // define roles, added to user on registration
+            $container->setParameter('user.registration.security.roles', $config['registration']['security']['roles']);
 
-        // firewall to auth registered user
-        $container->setParameter('user.registration.security.firewall', $config['registration']['security']['firewall']);
+            // firewall to auth registered user
+            $container->setParameter('user.registration.security.firewall', $config['registration']['security']['firewall']);
+        }
 
         // load config from files
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));

@@ -2,7 +2,7 @@
 
 namespace Sokil\UserBundle\Controller;
 
-use Sokil\CommandBusBundle\Bus\Exception\InvalidCommandException;
+use Sokil\CommandBusBundle\CommandBus\Exception\InvalidCommandException;
 use Sokil\UserBundle\CommandBus\AuthorizeUser\AuthorizeUserCommand;
 use Sokil\UserBundle\CommandBus\RegisterUser\RegisterUserCommand;
 use Sokil\UserBundle\Entity\User;
