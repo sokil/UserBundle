@@ -21,6 +21,7 @@ class AppKernel extends Kernel
     public function registerBundles()
     {
         $bundles = array(
+            new Sokil\CommandBusBundle\CommandBusBundle(),
             new Sokil\UserBundle\UserBundle(),
         );
     }
@@ -87,6 +88,17 @@ security:
       - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
       - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
       - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+```
+Add some bundle configuration to `app/config/config.yaml`:
+```yaml
+# User
+user:
+  # add if user allowed to register himself
+  registration:
+    security:
+      firewall: main
+      roles:
+        - ROLE_CLIENT
 ```
 
 Create tables:
