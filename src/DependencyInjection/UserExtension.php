@@ -18,10 +18,18 @@ class UserExtension extends Extension
         // if registration allowed
         if (!empty($config['registration'])) {
             // define roles, added to user on registration
-            $container->setParameter('user.registration.security.roles', $config['registration']['security']['roles']);
+            $roles = empty($config['registration']['security']['roles'])
+                ? 'ROLE_USER'
+                : $config['registration']['security']['roles'];
+
+            $container->setParameter('user.registration.security.roles', $roles);
 
             // firewall to auth registered user
-            $container->setParameter('user.registration.security.firewall', $config['registration']['security']['firewall']);
+            $firewall = empty($config['registration']['security']['firewall'])
+                ? 'main'
+                : $config['registration']['security']['firewall'];
+
+            $container->setParameter('user.registration.security.firewall', $firewall);
         }
 
         // load config from files
