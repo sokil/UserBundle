@@ -88,6 +88,16 @@ security:
       - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
       - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
 ```
+Add some bundle configuration to `app/config/config.yaml`:
+```yaml
+# User
+user:
+  registration:
+    security:
+      firewall: main
+      roles:
+        - ROLE_CLIENT
+```
 
 Create tables:
 ```
