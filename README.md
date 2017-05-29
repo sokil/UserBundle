@@ -93,6 +93,7 @@ Add some bundle configuration to `app/config/config.yaml`:
 ```yaml
 # User
 user:
+  # add if user allowed to register himself
   registration:
     security:
       firewall: main
