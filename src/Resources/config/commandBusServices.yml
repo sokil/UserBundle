@@ -12,7 +12,7 @@ services:
     arguments:
       - '@doctrine.orm.default_entity_manager'
       - '@validator'
-      - '%user.registration.security.roles%'
+      - ['ROLE_USER'] # roles
     tags:
       -
         name: sokil.command_bus_handler
@@ -24,7 +24,7 @@ services:
     arguments:
       - '@security.authentication.manager'
       - '@security.token_storage'
-      - '%user.registration.security.firewall%'
+      - 'main' # firewall
     tags:
       -
         name: sokil.command_bus_handler

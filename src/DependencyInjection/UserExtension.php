@@ -22,14 +22,18 @@ class UserExtension extends Extension
                 ? 'ROLE_USER'
                 : $config['registration']['security']['roles'];
 
-            $container->setParameter('user.registration.security.roles', $roles);
+            $container
+                ->getDefinition('user.command_bus.command_handler.register')
+                ->replaceArgument(2, $roles);
 
             // firewall to auth registered user
             $firewall = empty($config['registration']['security']['firewall'])
                 ? 'main'
                 : $config['registration']['security']['firewall'];
 
-            $container->setParameter('user.registration.security.firewall', $firewall);
+            $container
+                ->getDefinition('user.command_bus.command_handler.authorize_user')
+                ->replaceArgument(2, $firewall);
         }
 
         // load config from files
