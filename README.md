@@ -21,6 +21,7 @@ class AppKernel extends Kernel
     public function registerBundles()
     {
         $bundles = array(
+            new Sokil\CommandBusBundle\CommandBusBundle(),
             new Sokil\UserBundle\UserBundle(),
         );
     }
