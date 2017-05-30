@@ -115,6 +115,8 @@ User attribures based on [EAV model](https://en.wikipedia.org/wiki/Entity%E2%80%
 
 ## Authentication
 
+### Login form
+
 Login form has next form:
 ```html
 <form action="/login_check" method="post">
@@ -127,6 +129,8 @@ Login form has next form:
 ```
 
 Input names on this form is default and may be configured, as described in [Full Default Configuration](http://symfony.com/doc/current/reference/configuration/security.html)
+
+### Ajax response of login request
 
 There are two event listeners, which overrides response of login request to handle ajax requests:
 
