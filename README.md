@@ -72,6 +72,7 @@ security:
             form_login:
                 provider: user_provider_email
                 # csrf_provider: form.csrf_provider
+                require_previous_session: false
                 success_handler: user.authentication_success_handler
                 failure_handler: user.authentication_failure_handler
             logout:       true
