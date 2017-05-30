@@ -115,6 +115,19 @@ User attribures based on [EAV model](https://en.wikipedia.org/wiki/Entity%E2%80%
 
 ## Authentication
 
+Login form has next form:
+```html
+<form action="/login_check" method="post">
+<input type="hidden" name="_csrf_token">
+<input type="text" name="_username">
+<input type="password" name="_password">
+<input type="checkbox" name="_remember_me">
+<button type="submit" class="btn btn-success">Log in</button>
+</form>
+```
+
+Input names on this form is default and may be configured, as described in [Full Default Configuration](http://symfony.com/doc/current/reference/configuration/security.html)
+
 There are two event listeners, which overrides response of login request to handle ajax requests:
 
 ```yaml
@@ -127,7 +140,7 @@ user.authentication_failure_handler:
     arguments: ['@http_kernel', '@security.http_utils', {}, "@logger"]
 ```
 
-If you want to override authentification logic, configure security firewall to use this listeners in `./app/config/security.yml`:
+Configure security firewall to use this listeners in `./app/config/security.yml`:
 
 ```yaml
 security:
