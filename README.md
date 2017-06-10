@@ -107,7 +107,12 @@ Create tables:
 ```
 ./app/console doctrine:schema:update
 ```
+## User roles
 
+| Role              | Description                            |
+|-------------------|----------------------------------------|
+| ROLE_USER_VIEWER  | Can view user list and user profile    |
+| ROLE_USER_MANAGER | Can edit user                          |
 
 ## User attributes
 
