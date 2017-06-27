@@ -6,12 +6,15 @@ use Symfony\Component\Security\Http\Authentication\DefaultAuthenticationSuccessH
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Sokil\UserBundle\EventListener\AuthenticationHandler\ResponsePolicy\JsonResponsePolicy;
 
 class AuthenticationSuccessHandler extends DefaultAuthenticationSuccessHandler
 {
     public function onAuthenticationSuccess(Request $request, TokenInterface $token)
     {
-        if ($request->isXmlHttpRequest()) {
+        $jsonPolicy = new JsonResponsePolicy();
+
+        if ($jsonPolicy->isAcceptable($request)) {
             return new JsonResponse([
                 'error' => 0,
                 'url' => $this->determineTargetUrl($request),
