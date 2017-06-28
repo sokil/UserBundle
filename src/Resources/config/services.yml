@@ -25,6 +25,10 @@ services:
     class: Sokil\UserBundle\EventListener\AuthenticationFailureHandler
     arguments: ['@http_kernel', '@security.http_utils', {}, "@logger"]
 
+  user.logout_success_handler:
+    class: Sokil\UserBundle\EventListener\LogoutSuccessHandler
+    arguments: ['@security.http_utils', '/']
+
   user.validation_errors_converter:
     class: Sokil\Converter\ValidationErrorsConverter
 

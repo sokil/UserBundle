@@ -76,7 +76,9 @@ security:
                 require_previous_session: false
                 success_handler: user.authentication_success_handler
                 failure_handler: user.authentication_failure_handler
-            logout:       true
+            logout:
+                target: /
+                success_handler: user.logout_success_handler
             anonymous:    true
             remember_me:
                 key: "%secret%"
@@ -135,7 +137,7 @@ Login form has next form:
 
 Input names on this form is default and may be configured, as described in [Full Default Configuration](http://symfony.com/doc/current/reference/configuration/security.html)
 
-### Ajax response of login request
+### Ajax response of login and logout request
 
 There are two event listeners, which overrides response of login request to handle ajax requests:
 
@@ -158,4 +160,23 @@ security:
             form_login:
                 success_handler: user.authentication_success_handler
                 failure_handler: user.authentication_failure_handler
+```
+
+Also you can override logout response handler to handle json response:
+
+```yaml
+user.logout_success_handler:
+    class: Sokil\UserBundle\EventListener\LogoutSuccessHandler
+    arguments: ['@security.http_utils', '/']
+```
+
+You can configure filrewa;; to use this listener in `./app/config/security.yml`:
+
+```yaml
+security:
+    firewalls:
+        main:
+            form_login:
+                success_handler: user.logout_success_handler
+                target: /
 ```
