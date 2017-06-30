@@ -21,6 +21,7 @@ class AppKernel extends Kernel
     public function registerBundles()
     {
         $bundles = array(
+            # user bundle is a collection of command handlers so we need command bus
             new Sokil\CommandBusBundle\CommandBusBundle(),
             new Sokil\UserBundle\UserBundle(),
         );
