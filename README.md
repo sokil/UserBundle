@@ -1,6 +1,6 @@
 # UserBundle
 
-User attributes, groups and roles management. Backend and SPA.
+User attributes, groups and roles management.
 
 [![Latest Stable Version](https://poser.pugx.org/sokil/user-bundle/v/stable.png)](https://packagist.org/packages/sokil/user-bundle)
 [![Total Downloads](http://img.shields.io/packagist/dt/sokil/user-bundle.svg)](https://packagist.org/packages/sokil/user-bundle)
@@ -180,3 +180,10 @@ security:
                 success_handler: user.logout_success_handler
                 target: /
 ```
+
+### User interface
+
+Early release may be found at  https://github.com/sokil/UserBundle.js
+
+Backbone/Marionette app with posibility to use different themes.
+
