@@ -6,7 +6,7 @@ use Symfony\Component\Security\Http\Authentication\DefaultAuthenticationSuccessH
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Sokil\UserBundle\EventListener\AuthenticationHandler\ResponsePolicy\JsonResponsePolicy;
+use Sokil\UserBundle\EventListener\ResponsePolicy\JsonResponsePolicy;
 
 class AuthenticationSuccessHandler extends DefaultAuthenticationSuccessHandler
 {

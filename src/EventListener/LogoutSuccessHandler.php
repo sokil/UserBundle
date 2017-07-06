@@ -2,11 +2,11 @@
 
 namespace Sokil\UserBundle\EventListener;
 
-use Sokil\UserBundle\EventListener\AuthenticationHandler\ResponsePolicy\JsonResponsePolicy;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Logout\DefaultLogoutSuccessHandler;
+use Sokil\UserBundle\EventListener\ResponsePolicy\JsonResponsePolicy;
 
 class LogoutSuccessHandler extends DefaultLogoutSuccessHandler
 {

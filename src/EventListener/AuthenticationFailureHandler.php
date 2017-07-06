@@ -6,7 +6,7 @@ use Symfony\Component\Security\Http\Authentication\DefaultAuthenticationFailureH
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Sokil\UserBundle\EventListener\AuthenticationHandler\ResponsePolicy\JsonResponsePolicy;
+use Sokil\UserBundle\EventListener\ResponsePolicy\JsonResponsePolicy;
 
 class AuthenticationFailureHandler extends DefaultAuthenticationFailureHandler
 {

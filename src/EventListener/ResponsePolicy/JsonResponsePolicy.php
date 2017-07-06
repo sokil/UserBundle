@@ -1,6 +1,6 @@
 <?php
 
-namespace Sokil\UserBundle\EventListener\AuthenticationHandler\ResponsePolicy;
+namespace Sokil\UserBundle\EventListener\ResponsePolicy;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\AcceptHeader;
