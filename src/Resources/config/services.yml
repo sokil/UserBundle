@@ -7,9 +7,6 @@ services:
     arguments:
       - '@user.repository.user'
 
-  user.authentication_manager:
-    class: Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager
-
   user.voter:
     class: Sokil\UserBundle\Voter\UserVoter
     arguments:
@@ -30,7 +27,7 @@ services:
     arguments: ['@security.http_utils', '/']
 
   user.validation_errors_converter:
-    class: Sokil\Converter\ValidationErrorsConverter
+    class: Sokil\UserBundle\Converter\ValidationErrorsConverter
 
   user.repository.user_attributes:
     class: Sokil\UserBundle\Repository\UserAttributeRepository
