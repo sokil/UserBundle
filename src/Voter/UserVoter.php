@@ -2,6 +2,7 @@
 
 namespace Sokil\UserBundle\Voter;
 
+use Sokil\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter;
@@ -68,19 +69,28 @@ class UserVoter implements VoterInterface
         return $vote;
     }
 
-    protected function isViewGranted(UserInterface $user, TokenInterface $token = null)
+    /**
+     * @param string $roleName
+     * @return bool
+     */
+    protected function isRoleGranted($roleName, UserInterface $user, TokenInterface $token = null)
     {
+        // check current user
         $currentUser = $token->getUser();
-        if (!($currentUser instanceof UserInterface)) {
+        if (!$currentUser instanceof UserInterface) {
             return false;
         }
 
-        if ($user->getId() === $currentUser->getId()) {
+        // check myself
+        if ($user instanceof User) {
+            if ($user->getId() === $currentUser->getId()) {
+                return true;
+            }
+        }
+
+        // check permission
+        if (VoterInterface::ACCESS_GRANTED === $this->roleVoter->vote($token, $currentUser, array($roleName))) {
             return true;
-        }
-
-        if(VoterInterface::ACCESS_GRANTED !== $this->roleVoter->vote($token, $currentUser, array('ROLE_USER_VIEWER'))) {
-            return false;
         }
 
         return false;
@@ -89,19 +99,21 @@ class UserVoter implements VoterInterface
     /**
      * @param UserInterface $user
      * @param TokenInterface|null $token
-     * @return boolIf user can edit himself or other
+     * @return bool
+     */
+    protected function isViewGranted(UserInterface $user, TokenInterface $token = null)
+    {
+        return $this->isRoleGranted('ROLE_USER_VIEWER', $user, $token);
+    }
+
+    /**
+     * @param UserInterface $user
+     * @param TokenInterface|null $token
+     * @return bool If user can edit himself or other
      */
     protected function isEditGranted(UserInterface $user, TokenInterface $token = null)
     {
-        if ($user->getId() === $token->getUser()->getId()) {
-            return true;
-        }
-
-        if (VoterInterface::ACCESS_GRANTED !== $this->roleVoter->vote($token, $token->getUser(), array('ROLE_USER_MANAGER'))) {
-            return false;
-        }
-
-        return false;
+        return $this->isRoleGranted('ROLE_USER_MANAGER', $user, $token);
     }
 
     /**
