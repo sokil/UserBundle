@@ -7,24 +7,40 @@ use Sokil\UserBundle\Entity\User;
 class RegisterUserCommand
 {
     /**
-     * @var User
+     * @var string
      */
-    private $user;
+    private $email;
 
     /**
-     * @param User $user
+     * @var string
+     */
+    private $password;
+
+    /**
+     * @param string $email
+     * @param string $password
      */
     public function __construct(
-        User $user
+        $email,
+        $password
     ) {
-        $this->user = $user;
+        $this->email = $email;
+        $this->password = $password;
     }
 
     /**
-     * @return User
+     * @return string
      */
-    public function getUser()
+    public function getEmail()
     {
-        return $this->user;
+        return $this->email;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 }

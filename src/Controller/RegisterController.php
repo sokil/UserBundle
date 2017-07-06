@@ -23,14 +23,14 @@ class RegisterController extends Controller
         $bus = $this->get('user.command_bus');
 
         // create user
-        $user = new User();
-        $user
-            ->setEmail($request->get('email'))
-            ->setPassword($request->get('password'));
+        $command = new RegisterUserCommand(
+            $request->get('email'),
+            $request->get('password')
+        );
 
         // register user
         try {
-            $bus->handle(new RegisterUserCommand($user));
+            $user = $bus->handle($command);
         } catch (InvalidCommandException $e) {
             // convert validation errors
             $validationErrors = $this
