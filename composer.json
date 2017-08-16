@@ -30,10 +30,5 @@
     "suggest": {
         "sokil/frontend-bundle": "Required to enable SPA",
         "sokil/deploy-bundle": "Deploy symfony2 apps"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "0.4-dev"
-        }
     }
 }
